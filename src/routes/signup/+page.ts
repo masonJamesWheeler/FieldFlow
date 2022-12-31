@@ -1,5 +1,4 @@
 // imports
-import {goto} from "$app/navigation"
 import {auth} from "../../lib/firebase"
 import type { PageLoad } from './$types';
  

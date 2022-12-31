@@ -1,11 +1,18 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { writable } from 'svelte/store';
-	import { get } from 'svelte/store';
-	import { tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { Graph } from './adjMatrix';
+	import { Player, Node } from "../../utils/objects"
 	import type { Graph as GraphType } from './adjMatrix';
+	import type {PageData} from '$lib/types';
+	import { storeFormation, storePlay} from '../../utils/stores';
+	import {drawFormation} from '../../utils/drawing';
+	import { db } from '../../lib/firebase';
+	
+ 
+	// get the user as a props
+	export let data: PageData;
+
 	// intialize a variable for a div to hold the canvas
 	let canvasDiv: number;
 	//initialize the canvas
@@ -15,14 +22,18 @@
 	let rect: DOMRect;
 	let players: Player[] = [];
 	let keysPressed = {};
+	let originalFormations:string[] = [];
+	let formationInput:string = ""
+	let playInput:string = ""
+
 
 	// intialize variables to hold the current player being edited
 	let current_player: Player = null;
-	let current_line_segment: LineSegment = null;
 	let currentNode: Node = null;
 	let index: number = null;
 	let editNode: Node = null;
 	let editingPlayer: Player = null;
+	
 	// initialize booleans to hold the state of the editor
 	let drawing: boolean = false;
 	let editing: boolean = false;
@@ -35,6 +46,12 @@
     let addOption: boolean = false;
 	let typing: boolean = false;
 	let motion: boolean = false;
+	let formationName:string = "";
+	let playName:string = "";
+	// initialize the tabs
+	let tabs = [ 'Player-Editor', 'Ctrls', 'Shortcuts']
+	let activeTabIndex = 1
+
 	// store the mouse position
 	let m = { x: 0, y: 0 };
 	// store magnets coords
@@ -56,6 +73,8 @@
 	let m2 = { x: 0, y: 0 };
 	// store the shifted length of the ray
 	let length = 0;
+
+
 
 	// onmount initialize the canvas
 	onMount(() => {
@@ -123,110 +142,13 @@
    		keysPressed[event.key] = true;
 		});
 		document.addEventListener('keyup', (event) => {
-   		delete keysPressed[event.key];
+   		delete keysPressed[event.key]
 	});
+	console.log(data.props.user)
+	console.log(data.props.plays)
 
+	
 });
-	// create a line segment object, the object has the following properties :
-	// x1, y1, x2, y2, color, dashed, bezier, arrowhead
-	// the objects or stored in the player's arrays and used to draw the path of the players
-	class LineSegment {
-		x1: number;
-		y1: number;
-		x2: number;
-		y2: number;
-		cx: number;
-		cy: number;
-		color: string;
-		dashed: boolean;
-		bezier: boolean;
-		arrowhead: boolean;
-		constructor(
-			node1: Node,
-			node2: Node,
-			node3: Node,
-			color: string,
-			dashed: boolean,
-			bezier: boolean,
-			arrowhead: boolean
-		) {
-			this.x1 = node1.x;
-			this.y1 = node1.y;
-			if (node2 != null) {
-				this.x2 = node2.x;
-				this.y2 = node2.y;
-			}
-			if (node3 != null) {
-				this.cx = node3.x;
-				this.cy = node3.y;
-			}
-			this.color = color;
-			this.dashed = dashed;
-			this.bezier = bezier;
-			this.arrowhead = arrowhead;
-		}
-	}
-
-	// create a player object, the object has the following properties :
-	// x, y, color, name, path, adjaency matrix
-	// the objects or stored in the player's arrays and used to draw the path of the players
-	class Player {
-		x: number;
-		y: number;
-		color: string;
-		name: string;
-		job: string;
-		adjmatrix: GraphType<Node>;
-		constructor(
-			x: number,
-			y: number,
-			color: string,
-			name: string,
-			job: string,
-			adjmatrix: GraphType<Node>
-		) {
-			this.x = x;
-			this.y = y;
-			this.color = color;
-			this.name = name;
-			this.job = job;
-			this.adjmatrix = adjmatrix;
-		}
-	}
-
-	// create a node object to store the nodes of the adjacency matrix
-	class Node {
-		x: number;
-		y: number;
-		cpx: number;
-		cpy: number;
-		color: string;
-		dashed: boolean;
-		cp: boolean;
-		arrow: boolean;
-		blocking: boolean;
-		constructor(
-			x: number,
-			y: number,
-			cpx: number,
-			cpy: number,
-			color: string,
-			dashed: boolean,
-			cp: boolean,
-			arrow: boolean,
-			blocking: boolean
-		) {
-			this.x = x;
-			this.y = y;
-			this.cpx = cpx;
-			this.cpy = cpy;
-			this.color = color;
-			this.dashed = dashed;
-			this.cp = cp;
-			this.arrow = arrow;
-			this.blocking = blocking;
-		}
-	}
 
 	// <---------      PLAYER FUNCTIONS     --------->
 
@@ -361,6 +283,9 @@
 					}
 				});
 			});
+			if (currPlayer.progression != null) {
+				drawProgression(currPlayer);
+			}
 		}
         // to draw a player's name if they're being edited
         if (editingPlayer != null) {
@@ -380,19 +305,19 @@
 		if (magnetX && magnetY) {
 			n = new Node(magnetCoords.x, magnetCoords.y, null, null, 'black', false, false, false, false);
 			graph = new Graph<Node>(comparator, n);
-			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph); 
+			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null); 
 		} else if (magnetX) {
 			n = new Node(magnetCoords.x, m.y, null, null, 'black', false, false, false, false);
 			graph = new Graph<Node>(comparator, n);
-			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph);
+			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null);
 		} else if (magnetY) {
 			n = new Node(m.x, magnetCoords.y, null, null, 'black', false, false, false, false);
 			graph = new Graph<Node>(comparator, n);
-			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph);
+			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null);
 		} else {
 			n = new Node(m.x, m.y, null, null, 'black', false, false, false, false);
 			graph = new Graph<Node>(comparator, n);
-			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph);
+			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null);
 		}
 		// create the graph
 		// create a new player
@@ -400,10 +325,12 @@
 		players.push(p);
 		// add a line segment to the player's path
 		current_player = players[players.length - 1];
-		current_line_segment = null;
 		currentNode = n;
 		p.adjmatrix.addNewNode(n);
 		drawing = true;
+		// change the tab to the player's tab
+		activeTabIndex = 0
+
 		editing = false;
 		angleLock();
 	}
@@ -543,6 +470,8 @@
 		// if current player is not null
 		if (current_player != null) {
 		}
+		// reset length
+		length = 0;
 	}
 
 	// function inCircle checks if our points are radially close to an origin
@@ -561,11 +490,9 @@
 	function showProjection() {
 		// if the user is currently drawing
 		if (drawing) {
-			console.log('testing')
 			if (keysPressed['Shift']) {
 				clearCanvas(ctx);
 				if (current_player.adjmatrix.firstAdded.data == currentNode) {
-					console.log('troubleshooting')
 					// if the mouse is within 20 pixels of the y position of the currentNode and the cursor is to the right of the node
 					if (m.y - currentNode.y > - 80) {
 						// draw a line from the current node to the mouse position
@@ -678,7 +605,6 @@
 					drawPlayers();
 				}
 			}
-			console.log(motion)
 		}
 		// reset the m object
 	}
@@ -779,7 +705,6 @@
 		// set the line dash back to normal
 		ctx.setLineDash([0, 0]);
 	}
-	// }
 	// function to clear the canvas and replace it with just the background
 	function clearCanvas(ctx) {
 		//suprress any error from the function
@@ -796,6 +721,7 @@
 
 	// function to escape currently drawing a player's path
 	function escape() {
+		
 		// change all the players' colors to black
 		for (let i = 0; i < players.length; i++) {
 			players[i].color = 'black';
@@ -819,8 +745,6 @@
                 drawing = false;
 			// set the current player to null
 			current_player = null;
-			// set the current line segment to null
-			current_line_segment = null;
 			// set the current node to null
 			currentNode = null;
 			// set the editing player to null
@@ -842,8 +766,6 @@
 			editing = false;
 			// set the current player to null
 			current_player = null;
-			// set the current line segment to null
-			current_line_segment = null;
 			// set the current node to null
 			currentNode = null;
 			// set the editing player to null
@@ -851,11 +773,15 @@
 			// set the edit node to null
 			editNode = null;
 		}
+		// reset the magnet values 
 		typing = false
+		// reset length
+		length = 0;
 		// clear the canvas
 		clearCanvas(ctx);
 		// draw the player's path
 		drawPlayers();
+	
 	}
 
 	// function to only show multiple angles of 15 degrees from the projected line
@@ -919,7 +845,6 @@
                         currentNode = node.data;
                         editing = false;
                         drawing = true;
-                        console.log(currentNode)
                     }
                     
 				}
@@ -995,64 +920,92 @@
 	function drawOval(x1, y1, color, currPlayer) {
 		if (ctx != null) {
 			if (currPlayer != null) {
-				if (currPlayer.name == 'C' || currPlayer.name == 'c') {
+				if (currPlayer.position == 'C' || currPlayer.position == 'c') {
 					if (players.length == 1) {
 						let graph: Graph<Node>;
 						// create the rest of the offensive line
 						
 						let i = new Node(currPlayer.x-250, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, i);
-						let a = new Player(currPlayer.x-250 ,currPlayer.y,'Black', 'LT', 'route/job', graph)
+						let a = new Player(currPlayer.x-250 ,currPlayer.y,'Black', 'LT', 'route/job', graph, null)
 						a.adjmatrix.addNewNode(i);
 						players.push(a);
 
 						let j = new Node(currPlayer.x-125, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, j);
-					    let b = new Player(currPlayer.x-125 ,currPlayer.y,'Black', 'LG', 'route/job', graph)
+					    let b = new Player(currPlayer.x-125 ,currPlayer.y,'Black', 'LG', 'route/job', graph, null)
 						b.adjmatrix.addNewNode(j);
 						players.push(b);
 
 						let k = new Node(currPlayer.x+125, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, k);
-						let c = new Player(currPlayer.x+125 ,currPlayer.y,'Black', 'RG', 'route/job', graph)
+						let c = new Player(currPlayer.x+125 ,currPlayer.y,'Black', 'RG', 'route/job', graph, null)
 						c.adjmatrix.addNewNode(k);
 						players.push(c);
 
 						let m = new Node(currPlayer.x+250, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, m);
-						let d = new Player(currPlayer.x+250 ,currPlayer.y,'Black', 'RT', 'route/job', graph)
+						let d = new Player(currPlayer.x+250 ,currPlayer.y,'Black', 'RT', 'route/job', graph, null)
 						d.adjmatrix.addNewNode(m);
 						players.push(d);
 					}
 					// make a hollow rectangle instead of an oval
+					// fill the inside of the rectangle with the color white
+					ctx.fillStyle = 'white';
+					ctx.beginPath();
+					ctx.rect(x1 - 40, y1 - 40, 80, 80);
+					ctx.fill();
+					// draw the rectangle
+					ctx.fillStyle = color
 					ctx.strokeStyle = color;
 					ctx.lineWidth = 10;
 					ctx.beginPath();
 					ctx.rect(x1 - 40, y1 - 40, 80, 80);
 					ctx.stroke();
 				} else {
-					ctx.strokeStyle = color;
+			// fill the inside of the oval with the color white
+			ctx.fillStyle = 'white';
+			ctx.beginPath();
+			ctx.ellipse(x1, y1, 40, 40, 0, 0, 2 * Math.PI);
+			ctx.fill();
+			// draw the oval
+			ctx.fillStyle = color
+			ctx.strokeStyle = color;
 			ctx.lineWidth = 12;
 			ctx.beginPath();
 			ctx.ellipse(x1, y1, 40, 40, 0, 0, 2 * Math.PI);
 			ctx.stroke();
 				}
 			} else {
+			// fill the inside of the oval with the color white
+			ctx.fillStyle = 'white';
+			ctx.beginPath();
+			ctx.ellipse(x1, y1, 40, 40, 0, 0, 2 * Math.PI);
+			ctx.fill();
+			// draw the oval
+			ctx.fillStyle = color
 			ctx.strokeStyle = color;
 			ctx.lineWidth = 12;
 			ctx.beginPath();
 			ctx.ellipse(x1, y1, 40, 40, 0, 0, 2 * Math.PI);
 			ctx.stroke();
 			}
-			// if the player's name is not 'pos', null, or "" than draw the player's name
+			// if the player's position is not 'pos', null, or "" than draw the player's position
 			// inside of the oval
 			if (currPlayer != null) {
-			if (currPlayer.name != 'pos' && currPlayer.name != null && currPlayer.name != '' && currPlayer.name != 'C' && currPlayer.name != 'c'
-			&& currPlayer.name != 'LT' && currPlayer.name != 'LG' && currPlayer.name != 'RG' && currPlayer.name != 'RT') {
-				ctx.font = '65px Georgia bold';
-				
+				if (currPlayer.position != 'pos' && currPlayer.position != null && currPlayer.position != '' && currPlayer.position != 'C' && currPlayer.position != 'c'
+			&& currPlayer.position != 'LT' && currPlayer.position != 'LG' && currPlayer.position != 'RG' && currPlayer.position != 'RT') {
+				if (currPlayer.position.length > 1) {
+                    ctx.font = "45px Georgia bold"
+                } else {
+                ctx.font = '65px Georgia bold';
+                }
 				ctx.fillStyle = 'black';
-				ctx.fillText(currPlayer.name, x1 - 23, y1 + 18);
+                if (currPlayer.position.length > 1) {
+                    ctx.fillText(currPlayer.position, x1 - 30, y1 + 18);
+                } else {
+				ctx.fillText(currPlayer.position, x1 - 23, y1 + 18);
+                }
 			}
 			// if the player's job isn't null or "" or 'route/job' than draw the player's job
 			// below the oval
@@ -1157,10 +1110,12 @@
 	//function to delete a player
 	function deletePlayer() {
 		// remove the player from the players array
-		console.log(editingPlayer)
 		players.splice(players.indexOf(editingPlayer), 1);
-		console.log(players)
 		//escape
+		magnetX = false;
+		magnetY = false;
+		magnetCoords.x = m.x
+		magnetCoords.y = m.y
 		escape();
 		
 		
@@ -1168,16 +1123,16 @@
 
     // function to select and edit a player by clicking on their oval
     function selectPlayer(x: number, y: number) {
-		console.log('working')
         let found = false;
         // traverse the players array
         for (let i = 0; i < players.length; i++) {
             // check the players x and y and see if our mouse is close to it
-			console.log(i, players[i].x, players[i].y)
             if (Math.sqrt(Math.pow(players[i].x - x, 2) + Math.pow(players[i].y - y, 2)) < 50) {
 				
                 // set the editing player to the player we clicked on
                 editingPlayer = players[i];
+				// change the tab to the editingPlayers tab
+				activeTabIndex = 0
                 // set found to true
                 found = true;
                 // break out of the loop
@@ -1186,7 +1141,7 @@
         }
     }
 
-    // if a player is selected then we want to display the players name below their oval
+    // if a player is selected then we want to display the players position below their oval
     function showName() {
         // check if the editing player is null
         if (editingPlayer != null) {
@@ -1195,29 +1150,193 @@
             // set the color
             ctx.fillStyle = "black";
             // draw the text
-            ctx.fillText(editingPlayer.name, editingPlayer.x -75, editingPlayer.y +70);
+            ctx.fillText(editingPlayer.position, editingPlayer.x -75, editingPlayer.y +70);
         }
     }
     // if we click on a player's name then we want to be able to edit it
 	function changingName () {
 		typing = true
 	}
+	
+	// a function to load the formation and draw it upon request
+	async function loadFormation(formation, ctx, canvas, img, auth) {
+		players = await drawFormation(formation, ctx, canvas, img, auth);
+	}
 
-	// function to calculate the distance between the edge of the window and the the canvas
-
-
+	// function to draw the progression of a player
+	function drawProgression(player:Player) {
+		// we will draw the text of whatever the player's progression value is
+		// we will place this 50 pixels vertically over the last node
+		// set the font
+		ctx.font = "75px Helvetica";
+		// set the color
+		ctx.fillStyle = "red";
+		// draw the text
+		// case where the player ends in a bezier curve
+		if (player.adjmatrix.secondLastAdded.data.cp) {
+			ctx.fillText(player.progression, player.adjmatrix.secondLastAdded.data.x - 80, player.adjmatrix.secondLastAdded.data.y - 70);
+		} else {
+		ctx.fillText(player.progression, player.adjmatrix.lastAdded.data.x - 80, player.adjmatrix.lastAdded.data.y - 70);
+		}
+	}
     
 
 </script>
 
-<div class="w-full grid  items-center"
+<div class=" flex "
 bind:clientWidth={canvasDiv}
-
 >
-	<!-- make a canvas element  -->
-	<!-- bind the  -->
-	<!-- center the div -->
-	<div class = "relative">
+<!-- a side bar to display some text content -->
+	<div class="h-screen bg-gray-200 mx-auto">
+		<div class="tabs w-96 ml-2">
+			{#each tabs as tab, index}
+			  <!-- svelte-ignore a11y-click-events-have-key-events -->
+			  <!-- svelte-ignore a11y-missing-attribute -->
+			  <a
+				class="tab tab-lg tab-bordered" class:tab-active={activeTabIndex == index}
+				on:click={()=>activeTabIndex = index}
+			  >
+				{tab}
+			  </a>
+			{/each}
+		  </div>
+		  
+		  
+		  
+		  {#if activeTabIndex == 1}
+				<!-- a visual description of the keys' i.e controls of drawing on the canvas -->
+				<!-- a div with 10 rows of content that is centered in the tab -->
+				<div class="flex flex-col items-center">
+					<h1 class="text-3xl font-bold text-center my-5">Controls</h1>
+					<div class="flex flex-col items-center">
+						<div class = "">
+						<kbd class="kbd">shift</kbd>
+						+
+						<kbd class="kbd">click</kbd>
+						=
+						Add Player	 </div>
+						<div>
+							<h2 class="text-3xl font-bold text-center my-5">Drawing</h2>
+							
+							<kbd class="kbd">shift</kbd>
+							=
+							Angle-Lock 
+						</div>		
+						<div class = my-5>							
+							<kbd class="kbd">d</kbd>
+							+
+							<kbd class="kbd">click</kbd>
+							=
+							Start making a curve 
+						</div>		
+						<div>							
+							<kbd class="kbd">dbl-click</kbd>
+							=
+							Draw line with a arrow 
+						</div>
+						<div class = "my-5">						
+							<kbd class="kbd">a</kbd>
+							=
+							Make Dashed-Line 
+						</div>						
+						<h2 class="text-3xl font-bold text-center">Editing</h2>
+						<div class = "my-5">
+						<kbd class="kbd">s</kbd>
+							+
+							<kbd class="kbd">click on node</kbd>
+							=
+							Add Option 
+						</div>
+						<div>							
+							<kbd class="kbd">hold-click on node</kbd>
+							=
+							Drag Node
+						</div>
+						<div>						
+							<kbd class="kbd my-5">delete</kbd>
+							=
+							Delete player
+						</div>
+
+					</div>
+				</div>
+		  {/if}
+		  
+		  {#if activeTabIndex == 0}
+			<div>
+				<div class="flex flex-col items-center">
+					<h1 class="text-3xl font-bold text-center my-5">Player Editor</h1>
+					{#if editingPlayer != null}
+					<div class="flex flex-col items-center">
+						<h2 class="text-xl font-bold text-center my-5">Position</h2>
+						<input type="text" class="border-2 border-black rounded-md" bind:value={editingPlayer.position}
+						on:click={changingName}
+						 />
+					</div>
+					<div class="flex flex-col items-center">
+						<h2 class="text-xl font-bold text-center my-5">Route/Job Notes</h2>
+						<input type="text" class="border-2 border-black rounded-md" bind:value={editingPlayer.job}
+						on:click={changingName} />
+					</div>
+					<div class="flex flex-col items-center">
+						<h2 class="text-xl font-bold text-center my-5">Alert/Read Progression</h2>
+						<input type="text" class="border-2 border-black rounded-md" bind:value={editingPlayer.progression} />
+					</div>
+					<div class="flex flex-col items-center">
+						<h2 class="text-xl font-bold text-center my-5">Player Color</h2>
+						<input type="text" class="border-2 border-black rounded-md"  />
+					</div>
+					
+					<h2 class="text-xl font-bold text-center my-5">Select a player to edit</h2>
+					
+					<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={addPlayer}>Add Player</button>
+					<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={deletePlayer}>Delete Player</button>
+					{:else}
+					<h2 class="text-xl font-bold text-center my-5">Select a player to edit</h2>
+					{/if}
+				</div>
+			</div>
+		  {/if}
+		  
+		  {#if activeTabIndex == 2}
+		  <div>
+			<div class="flex flex-col items-center">
+				<h1 class="text-3xl font-bold text-center my-5">Pre-Set's</h1>
+				<div class="flex flex-col items-center">
+					<h2 class="text-xl font-bold text-center my-5">Formations</h2>					
+					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-xs" bind:value={formationInput}>
+					{#if formationInput != null && formationInput != "" && data.props.formations != null}
+					<ul class="dropdown-content menu p-2 bg-white rounded-b w-full overflow-y-auto">				
+						{#each data.props.formations as formation}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<li><a on:click={() => loadFormation(formation, ctx, canvas, img, data.props.user.uid)}>{formation}</a></li>
+						{/each}
+					</ul>
+					{/if}
+					
+				</div>
+				<div class="flex flex-col items-center">
+					<h2 class="text-xl font-bold text-center my-5">Play Name</h2>
+					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-xs" >
+				</div>
+				<div class="flex flex-col items-center">
+					<h2 class="text-xl font-bold text-center my-5">Play-Name</h2>
+					<input type="text" class="border-2 border-black rounded-md" bind:value={playName} />
+				</div>
+				<div class="flex flex-col items-center">
+					<h2 class="text-xl font-bold text-center my-5">Formation Name</h2>
+					<input type="text" class="border-2 border-black rounded-md" bind:value={formationName} />
+				</div>
+				
+				<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={() => storeFormation(players, formationName, data.props.user.uid, db)}>Add Formation</button>
+				<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={() => storePlay(db, data.props.user.uid, playName, players)}>Add Play</button>
+			</div>
+		</div>
+			 
+		  {/if}
+		  </div>
+	
+	<div class = "relative grid justify-center w-full">	
 	<canvas
 		bind:this={canvas}
 		on:mousemove={handleMousemove}
@@ -1230,20 +1349,7 @@ bind:clientWidth={canvasDiv}
 		class="mx-auto justify-center my-10"
 		id="canvas"
 	/>
-    {#if editingPlayer != null}
-	<input type="text" style="z-index:101; position:absolute; top:{65+((editingPlayer.y)/(canvas.height/rect.height))}px;
-	 left:{(canvasDiv-(canvas.width/rect.width))/2 + (editingPlayer.x)/(canvas.width / rect.width) -432}px;
-	 text-align: center;" placeholder="{editingPlayer.name}" bind:value={editingPlayer.name}
-	 class="input input-bordered input-primary  w-16"
-	 on:click={changingName}/>
-    {/if}
-	{#if editingPlayer != null}
-	<input type="text" style="z-index:101; position:absolute; top:{115+((editingPlayer.y)/(canvas.height/rect.height))}px;
-	 left:{(canvasDiv-(canvas.width/rect.width))/2 + (editingPlayer.x)/(canvas.width / rect.width)-432}px;
-	 text-align: center;" placeholder="{editingPlayer.job}" bind:value={editingPlayer.job}
-	 class="input input-bordered input-primary  w-16"
-	 on:click={changingName}/>
-    {/if}
+    
 
 </div>
 </div>

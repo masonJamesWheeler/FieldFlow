@@ -18,7 +18,7 @@
           <ul class="p-2 bg-base-100">
 
             <!-- svelte-ignore a11y-missing-attribute -->
-            <li><a href="/cardGeneration">Auto-Create Card</a></li>
+            <li><a href="#">Auto-Create Card</a></li>
             <!-- svelte-ignore a11y-missing-attribute -->
             <li><a>Submenu 2</a></li>
           </ul>
