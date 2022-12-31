@@ -1,10 +1,25 @@
 <script lang="ts"> 
-import {getAuth} from "firebase/auth";
+import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
 import { goto } from '$app/navigation';
 
 let email = "";
 let password = "";
 let auth = getAuth();
+
+// function to attempt to log in the user
+async function attemptLogin(email, password) {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log(user);
+        goto('/home');
+    } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode);
+        console.log(errorMessage);
+    }
+}
 
 </script>
 
