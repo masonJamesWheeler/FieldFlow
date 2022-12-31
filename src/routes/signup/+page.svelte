@@ -1,19 +1,36 @@
-<script lang="ts"> 
-import {app} from "../../lib/firebase";
-import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
+<script lang="ts">
+import {auth} from "../../lib/firebase";
+import {createUserWithEmailAndPassword} from "firebase/auth";
+import type {PageData} from './$types'
+import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
+
+// load the props from the server
+export let data:PageData
+console.log(data)
 
 let email = "";
 let password = "";
-let auth = getAuth(app);
+let password2 = "";
 
-// function to attempt to log in the user
-async function attemptLogin(email, password) {
+onMount(() => {
+    // if we are already logged in ask if we would like to log out
+    if (auth.currentUser) {
+        if (confirm("You are already logged in. Would you like to log out?")) {
+            auth.signOut();
+        } else {
+            goto('/');
+        }
+    } 
+})
+
+// function to attempt to create the user
+async function attemptCreateUser(email, password) {
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         console.log(user);
-        goto('/');
+        goto('/login');
     } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -21,10 +38,9 @@ async function attemptLogin(email, password) {
         console.log(errorMessage);
     }
 }
-
 </script>
 
-    <!-- a firebase styled login page -->
+ <!-- a firebase styled login page -->
     <!-- user's can log in with an email and password, or a gmail account-->
     <div class = "w-full h-screen">
         <!-- a hero div containing a form for the user to login -->
@@ -33,8 +49,8 @@ async function attemptLogin(email, password) {
             <div class="flex justify-center self-center z-10 w-fit">
               <div class="p-12  mx-auto rounded-2xl bg-base-300 ">
                   <div class="mb-4">
-                    <h3 class="font-semibold text-2xl text-gray-800">Sign In </h3>
-                    <p class="text-gray-500">Please sign in to your account.</p>
+                    <h3 class="font-semibold text-2xl text-gray-800">Sign Up </h3>
+                    <p class="text-gray-500">Please sign up for an account.</p>
                   </div>
                   <div class="space-y-5">
                               <div class="space-y-2">
@@ -44,11 +60,20 @@ async function attemptLogin(email, password) {
                     </div>
                                 <div class="space-y-2">
                     <!-- svelte-ignore a11y-label-has-associated-control -->
-                    <label class="mb-5 text-sm font-medium text-gray-700 tracking-wide">
+                    <label class="mb-5 text-sm font-medium text-gray-700 tracking-wide ">
                       Password
                     </label>
-                    <input class="w-full content-center text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-violet-400" type="" placeholder="Enter your password" bind:value={password}>
+                    <input class="w-full content-center text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-violet-400" type="password" placeholder="Enter your password" bind:value={password}>
                   </div>
+                  {#if password.length > 0}
+                  <div class="space-y-2">
+                    <!-- svelte-ignore a11y-label-has-associated-control -->
+                    <label class="mb-5 text-sm font-medium text-gray-700 tracking-wide ">
+                      One more time
+                    </label>
+                    <input class="w-full content-center text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-violet-400" type="password" placeholder="Enter your password again" bind:value={password2}>
+                  </div>
+                  {/if}
                     <div class="flex items-center justify-between">
                     <div class="flex items-center">
                       <input id="remember_me" name="remember_me" type="checkbox" class="h-4 w-4 bg-blue-500 focus:ring-blue-400 border-gray-300 rounded">
@@ -63,15 +88,11 @@ async function attemptLogin(email, password) {
                     </div>
                   </div>
                   <div>
-                    <button class="w-full flex justify-center btn btn-primary  shadow-lg cursor-pointer" on:click={() => attemptLogin(email, password)}>
-                      Sign in
+                    <button class="w-full flex justify-center btn btn-primary  shadow-lg cursor-pointer" on:click={() => attemptCreateUser(email, password)}>
+                      Sign Up
                     </button>
                   </div>
-                  <!-- a link to redirect to create an account if user does not have one yet -->
-                  <div class = "flex justify-end">
-                  <a class = "link" href = "/signup">Need to create an account?</a>
-                </div>  
-                </div>
+                  </div>
                   
               </div>
             </div>
