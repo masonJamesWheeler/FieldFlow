@@ -38,6 +38,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"daisyui": "^2.46.0"
+		"daisyui": "^2.46.0",
+		"firebase": "^9.15.0"
 	}
 }
