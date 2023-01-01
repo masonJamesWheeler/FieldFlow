@@ -1,9 +1,11 @@
 // import firebase utilities
 import { comparator, makeFormation } from './drawing';
 import { Player, Formation, Node } from '../utils/objects';
+import {Node as NodeType} from '../routes/drawplay/adjMatrix';
 import{ Player as playerType, type Formation as formationType} from "../utils/objects"
-import { Graph } from './adjMatrix';
-import { getDoc, getDocs, setDoc, doc, collection, query, where, onSnapshot, orderBy, limit, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { Graph} from './adjMatrix';
+import { getDoc, getDocs, setDoc, doc, collection, query, where, onSnapshot, orderBy, limit, addDoc, updateDoc, deleteDoc, type DocumentData } from "firebase/firestore";
+
 // import firebase config
 // a class converter to store data in firestore
 // Firestore data converter
@@ -192,3 +194,152 @@ export async function getPlayNames(user, db) {
     let plays = await getDocs(collection(db, "Users", user, "Plays"));
     return plays.docs.map((play) => {return play.data().name});
 }
+
+// a function to get a play from the database and return it as a Player[] array
+export async function getPlay(user, name, db) {
+    let play = await retrievePlay(user, name, db);
+    if (play) {
+        let players = [];
+        // create the first player
+        let playerOne = play.playerOne;
+        let playerOneFirstNodeData = playerOne.nodes[playerOne.x + "," + playerOne.y]
+        playerOneFirstNodeData = new Node(playerOne.x, playerOne.y, playerOneFirstNodeData.cpx, playerOneFirstNodeData.cpy, playerOneFirstNodeData.color, playerOneFirstNodeData.dashed,playerOneFirstNodeData.cp, playerOneFirstNodeData.blocking, playerOneFirstNodeData.arrow)
+        let playerOneGraph = new Graph<Node>(comparator,playerOneFirstNodeData);
+        let player1 = new Player(playerOne.x, playerOne.y, playerOne.color, playerOne.position, playerOne.job, playerOneGraph, playerOne.progression);
+        player1.adjmatrix.addNewNode(playerOneFirstNodeData)
+        addNodesToPlayer(player1, player1.adjmatrix.lastAdded, playerOne.position, playerOne);
+        players.push(player1);
+        // create the second player
+        let playerTwo = play.playerTwo;
+        let playerTwoFirstNodeData = playerTwo.nodes[playerTwo.x + "," + playerTwo.y]
+        playerTwoFirstNodeData = new Node(playerTwo.x, playerTwo.y, playerTwoFirstNodeData.cpx, playerTwoFirstNodeData.cpy, playerTwoFirstNodeData.color, playerTwoFirstNodeData.dashed,playerTwoFirstNodeData.cp, playerTwoFirstNodeData.blocking, playerTwoFirstNodeData.arrow)
+        let playerTwoGraph = new Graph<Node>(comparator,playerTwoFirstNodeData);
+        let player2 = new Player(playerTwo.x, playerTwo.y, playerTwo.color, playerTwo.position, playerTwo.job, playerTwoGraph, playerTwo.progression);
+        player2.adjmatrix.addNewNode(playerTwoFirstNodeData)
+        addNodesToPlayer(player2, player2.adjmatrix.lastAdded, playerTwo.position, playerTwo);
+        players.push(player2);
+        // create the third player
+        let playerThree = play.playerThree;
+        let playerThreeFirstNodeData = playerThree.nodes[playerThree.x + "," + playerThree.y]
+        playerThreeFirstNodeData = new Node(playerThree.x, playerThree.y, playerThreeFirstNodeData.cpx, playerThreeFirstNodeData.cpy, playerThreeFirstNodeData.color, playerThreeFirstNodeData.dashed,playerThreeFirstNodeData.cp, playerThreeFirstNodeData.blocking, playerThreeFirstNodeData.arrow)
+        let playerThreeGraph = new Graph<Node>(comparator,playerThreeFirstNodeData);
+        let player3 = new Player(playerThree.x, playerThree.y, playerThree.color, playerThree.position, playerThree.job, playerThreeGraph, playerThree.progression);
+        player3.adjmatrix.addNewNode(playerThreeFirstNodeData)
+        addNodesToPlayer(player3, player3.adjmatrix.lastAdded, playerThree.position, playerThree);
+        players.push(player3);
+        // create the fourth player
+        let playerFour = play.playerFour;
+        let playerFourFirstNodeData = playerFour.nodes[playerFour.x + "," + playerFour.y]
+        playerFourFirstNodeData = new Node(playerFour.x, playerFour.y, playerFourFirstNodeData.cpx, playerFourFirstNodeData.cpy, playerFourFirstNodeData.color, playerFourFirstNodeData.dashed,playerFourFirstNodeData.cp, playerFourFirstNodeData.blocking, playerFourFirstNodeData.arrow)
+        let playerFourGraph = new Graph<Node>(comparator,playerFourFirstNodeData);
+        let player4 = new Player(playerFour.x, playerFour.y, playerFour.color, playerFour.position, playerFour.job, playerFourGraph, playerFour.progression);
+        player4.adjmatrix.addNewNode(playerFourFirstNodeData)
+        addNodesToPlayer(player4, player4.adjmatrix.lastAdded, playerFour.position, playerFour);
+        players.push(player4);
+        // create the fifth player
+        let playerFive = play.playerFive;
+        let playerFiveFirstNodeData = playerFive.nodes[playerFive.x + "," + playerFive.y]
+        playerFiveFirstNodeData = new Node(playerFive.x, playerFive.y, playerFiveFirstNodeData.cpx, playerFiveFirstNodeData.cpy, playerFiveFirstNodeData.color, playerFiveFirstNodeData.dashed,playerFiveFirstNodeData.cp, playerFiveFirstNodeData.blocking, playerFiveFirstNodeData.arrow)
+        let playerFiveGraph = new Graph<Node>(comparator,playerFiveFirstNodeData);
+        let player5 = new Player(playerFive.x, playerFive.y, playerFive.color, playerFive.position, playerFive.job, playerFiveGraph, playerFive.progression);
+        player5.adjmatrix.addNewNode(playerFiveFirstNodeData)
+        addNodesToPlayer(player5, player5.adjmatrix.lastAdded, playerFive.position, playerFive);
+        players.push(player5);
+        console.log(players)
+        // create the sixth player
+        let playerSix = play.playerSix;
+        let playerSixFirstNodeData = playerSix.nodes[playerSix.x + "," + playerSix.y]
+        playerSixFirstNodeData = new Node(playerSix.x, playerSix.y, playerSixFirstNodeData.cpx, playerSixFirstNodeData.cpy, playerSixFirstNodeData.color, playerSixFirstNodeData.dashed,playerSixFirstNodeData.cp, playerSixFirstNodeData.blocking, playerSixFirstNodeData.arrow)
+        let playerSixGraph = new Graph<Node>(comparator,playerSixFirstNodeData);
+        let player6 = new Player(playerSix.x, playerSix.y, playerSix.color, playerSix.position, playerSix.job, playerSixGraph, playerSix.progression);
+        player6.adjmatrix.addNewNode(playerSixFirstNodeData)
+        addNodesToPlayer(player6, player6.adjmatrix.lastAdded, playerSix.position, playerSix);
+        players.push(player6);
+        // create the seventh player
+        let playerSeven = play.playerSeven;
+        let playerSevenFirstNodeData = playerSeven.nodes[playerSeven.x + "," + playerSeven.y]
+        playerSevenFirstNodeData = new Node(playerSeven.x, playerSeven.y, playerSevenFirstNodeData.cpx, playerSevenFirstNodeData.cpy, playerSevenFirstNodeData.color, playerSevenFirstNodeData.dashed,playerSevenFirstNodeData.cp, playerSevenFirstNodeData.blocking, playerSevenFirstNodeData.arrow)
+        let playerSevenGraph = new Graph<Node>(comparator,playerSevenFirstNodeData);
+        let player7 = new Player(playerSeven.x, playerSeven.y, playerSeven.color, playerSeven.position, playerSeven.job, playerSevenGraph, playerSeven.progression);
+        player7.adjmatrix.addNewNode(playerSevenFirstNodeData)
+        addNodesToPlayer(player7, player7.adjmatrix.lastAdded, playerSeven.position, playerSeven);
+        players.push(player7);
+        // create the eighth player
+        let playerEight = play.playerEight;
+        let playerEightFirstNodeData = playerEight.nodes[playerEight.x + "," + playerEight.y]
+        playerEightFirstNodeData = new Node(playerEight.x, playerEight.y, playerEightFirstNodeData.cpx, playerEightFirstNodeData.cpy, playerEightFirstNodeData.color, playerEightFirstNodeData.dashed,playerEightFirstNodeData.cp, playerEightFirstNodeData.blocking, playerEightFirstNodeData.arrow)
+        let playerEightGraph = new Graph<Node>(comparator,playerEightFirstNodeData);
+        let player8 = new Player(playerEight.x, playerEight.y, playerEight.color, playerEight.position, playerEight.job, playerEightGraph, playerEight.progression);
+        player8.adjmatrix.addNewNode(playerEightFirstNodeData)
+        addNodesToPlayer(player8, player8.adjmatrix.lastAdded, playerEight.position, playerEight);
+        players.push(player8);
+        // create the ninth player
+        let playerNine = play.playerNine;
+        let playerNineFirstNodeData = playerNine.nodes[playerNine.x + "," + playerNine.y]
+        playerNineFirstNodeData = new Node(playerNine.x, playerNine.y, playerNineFirstNodeData.cpx, playerNineFirstNodeData.cpy, playerNineFirstNodeData.color, playerNineFirstNodeData.dashed,playerNineFirstNodeData.cp, playerNineFirstNodeData.blocking, playerNineFirstNodeData.arrow)
+        let playerNineGraph = new Graph<Node>(comparator,playerNineFirstNodeData);
+        let player9 = new Player(playerNine.x, playerNine.y, playerNine.color, playerNine.position, playerNine.job, playerNineGraph, playerNine.progression);
+        player9.adjmatrix.addNewNode(playerNineFirstNodeData)
+        addNodesToPlayer(player9, player9.adjmatrix.lastAdded, playerNine.position, playerNine);
+        players.push(player9);
+        // create the tenth player
+        let playerTen = play.playerTen;
+        let playerTenFirstNodeData = playerTen.nodes[playerTen.x + "," + playerTen.y]
+        playerTenFirstNodeData = new Node(playerTen.x, playerTen.y, playerTenFirstNodeData.cpx, playerTenFirstNodeData.cpy, playerTenFirstNodeData.color, playerTenFirstNodeData.dashed,playerTenFirstNodeData.cp, playerTenFirstNodeData.blocking, playerTenFirstNodeData.arrow)
+        let playerTenGraph = new Graph<Node>(comparator,playerTenFirstNodeData);
+        let player10 = new Player(playerTen.x, playerTen.y, playerTen.color, playerTen.position, playerTen.job, playerTenGraph, playerTen.progression);
+        player10.adjmatrix.addNewNode(playerTenFirstNodeData)
+        addNodesToPlayer(player10, player10.adjmatrix.lastAdded, playerTen.position, playerTen);
+        players.push(player10);
+        // create the eleventh player
+        let playerEleven = play.playerEleven;
+        let playerElevenFirstNodeData = playerEleven.nodes[playerEleven.x + "," + playerEleven.y]
+        playerElevenFirstNodeData = new Node(playerEleven.x, playerEleven.y, playerElevenFirstNodeData.cpx, playerElevenFirstNodeData.cpy, playerElevenFirstNodeData.color, playerElevenFirstNodeData.dashed,playerElevenFirstNodeData.cp, playerElevenFirstNodeData.blocking, playerElevenFirstNodeData.arrow)
+        let playerElevenGraph = new Graph<Node>(comparator,playerElevenFirstNodeData);
+        let player11 = new Player(playerEleven.x, playerEleven.y, playerEleven.color, playerEleven.position, playerEleven.job, playerElevenGraph, playerEleven.progression);
+        player11.adjmatrix.addNewNode(playerElevenFirstNodeData)
+        addNodesToPlayer(player11, player11.adjmatrix.lastAdded, playerEleven.position, playerEleven);
+        players.push(player11);
+        console.log(players)
+        return players;
+        }
+    }
+
+
+    // function to recursively add the nodes in order to the graph
+    function addNodesToPlayer(player:Player, node, playerName:string,play:DocumentData) {
+           // to get the json information from the doc we have to search through nodes for the node
+           // by the x and y values
+           let adjNodes = [];
+           console.log(node)
+           console.log(play)
+              let nodeData = play.nodes[node.data.x + "," + node.data.y];
+              // get the adjNodes of the node
+                let adjNodeData= nodeData.adjNodes;
+                // if the adjNodes are empty then return
+                
+               // iterate through the adjNodes and create node objects
+                adjNodeData.forEach((adjNode) => {
+                    let adjNodeData = play.nodes[adjNode.x + "," + adjNode.y];
+                    let newNode = new Node(adjNode.x, adjNode.y, adjNodeData.cpx, adjNodeData.cpy, adjNodeData.color, adjNodeData.dashed,adjNode.cp, adjNodeData.arrow, adjNodeData.blocking,);
+                    adjNodes.push(newNode);
+                })
+
+                for (let i = 0; i < adjNodes.length; i++) {
+                    // add the adjNodes to the graph
+                    player.adjmatrix.addNewNode(adjNodes[i]);
+                    player.adjmatrix.addEdge(node.data, adjNodes[i]);
+                    // add the adjNodes to the adjNodes of the previous node
+                    node.adjNodes.push(player.adjmatrix.lastAdded);
+                }
+                // iterate through the adjNodes and call the function again
+                for (let i = 0; i < adjNodes.length; i++) {
+                    addNodesToPlayer(player, player.adjmatrix.lastAdded, playerName, play);
+                }
+       }
+    //convert json node to a new Node object
+    function convertAdjNodeToNode(adjNode) {
+        let node = new Node(adjNode.data.x, adjNode.data.y, adjNode.data.cpx, adjNode.data.cpy, adjNode.data.color, adjNode.data.dashed, adjNode.data.cp, adjNode.data.blocking, adjNode.data.arrow);
+        return node;
+    }
+    

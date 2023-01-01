@@ -5,13 +5,14 @@
 	import { Player, Node } from "../../utils/objects"
 	import type { Graph as GraphType } from './adjMatrix';
 	import type {PageData} from '$lib/types';
-	import { storeFormation, storePlay} from '../../utils/stores';
-	import {drawFormation} from '../../utils/drawing';
+	import { storeFormation, storePlay, getPlay, getFormation} from '../../utils/stores';
+	import {drawFormation, makeFormation} from '../../utils/drawing';
 	import { db } from '../../lib/firebase';
-	
+	import {getDefensivePlayers, getOffensiveStrength, frontRules, DefensiveFormation} from '../../utils/defObjects'
  
 	// get the user as a props
 	export let data: PageData;
+	console.log(data.props)
 
 	// intialize a variable for a div to hold the canvas
 	let canvasDiv: number;
@@ -21,6 +22,7 @@
 	let img: HTMLImageElement;
 	let rect: DOMRect;
 	let players: Player[] = [];
+	let defensivePlayers: Player[] = [];
 	let keysPressed = {};
 	let originalFormations:string[] = [];
 	let formationInput:string = ""
@@ -100,12 +102,12 @@
                 show = true;
             } 
 		});
-		// add an event listener to know when a is released
-		document.addEventListener('keydown', function (event) {
-			if (event.key == 'a') {
-				motion = true;
-			}
-		});
+		// // add an event listener to know when a is released
+		// document.addEventListener('keydown', function (event) {
+		// 	if (event.key == 'a') {
+		// 		motion = true;
+		// 	}
+		// });
 		// add an event listener to know when a is released
 		document.addEventListener('keyup', function (event) {
 			if (event.key == 'a') {
@@ -146,7 +148,6 @@
 	});
 	console.log(data.props.user)
 	console.log(data.props.plays)
-
 	
 });
 
@@ -322,11 +323,11 @@
 		// create the graph
 		// create a new player
 		// add the player to the players array
+		p.adjmatrix.addNewNode(n);
 		players.push(p);
 		// add a line segment to the player's path
 		current_player = players[players.length - 1];
 		currentNode = n;
-		p.adjmatrix.addNewNode(n);
 		drawing = true;
 		// change the tab to the player's tab
 		activeTabIndex = 0
@@ -339,6 +340,8 @@
 		// if the user is currently drawing
 		let l;
 		let n;
+		let dashed = keysPressed["a"];
+		console.log(dashed)
 		if (drawing) {
 			// if we are currently drawing a bezier curve
 			if (keysPressed['Shift']) {
@@ -374,7 +377,7 @@
 				currentNode = n;
 			} else {
 				if (keysPressed['d']) {
-					let n = new Node(m.x, m.y, null, null, 'black', false, true, false, false);
+					let n = new Node(m.x, m.y, null, null, 'black', dashed, true, false, false);
 					current_player.adjmatrix.addNewNode(n);
 					current_player.adjmatrix.addEdge(currentNode, n);
 					currentNode = n;
@@ -386,8 +389,8 @@
 					current_player.adjmatrix.lastAdded.data.cpx = m.x;
 					current_player.adjmatrix.lastAdded.data.cpy = m.y;
 				} else {
-                    
-					let n = new Node(m.x, m.y, null, null, 'black', keysPressed['a'], false, false, false);
+					
+					let n = new Node(m.x, m.y, null, null, 'black', dashed, false, false, false);
 					current_player.adjmatrix.addNewNode(n);
 					current_player.adjmatrix.addEdge(currentNode, n);
 					// adjust the current node
@@ -920,7 +923,7 @@
 	function drawOval(x1, y1, color, currPlayer) {
 		if (ctx != null) {
 			if (currPlayer != null) {
-				if (currPlayer.position == 'C' || currPlayer.position == 'c') {
+				if (currPlayer.position == 'C' || currPlayer.position == 'c'|| currPlayer.position == 'Center' || currPlayer.position == 'center') {
 					if (players.length == 1) {
 						let graph: Graph<Node>;
 						// create the rest of the offensive line
@@ -994,7 +997,7 @@
 			// inside of the oval
 			if (currPlayer != null) {
 				if (currPlayer.position != 'pos' && currPlayer.position != null && currPlayer.position != '' && currPlayer.position != 'C' && currPlayer.position != 'c'
-			&& currPlayer.position != 'LT' && currPlayer.position != 'LG' && currPlayer.position != 'RG' && currPlayer.position != 'RT') {
+			&& currPlayer.position != 'LT' && currPlayer.position != 'LG' && currPlayer.position != 'RG' && currPlayer.position != 'RT' && currPlayer.position != 'Center' && currPlayer.position != 'center') {
 				if (currPlayer.position.length > 1) {
                     ctx.font = "45px Georgia bold"
                 } else {
@@ -1163,6 +1166,14 @@
 		players = await drawFormation(formation, ctx, canvas, img, auth);
 	}
 
+	async function loadPlay(auth, name, db) {
+		players = await getPlay(auth, name, db);
+		// clear the canvas
+		clearCanvas(ctx);
+		// draw the players
+		drawPlayers();
+	}
+
 	// function to draw the progression of a player
 	function drawProgression(player:Player) {
 		// we will draw the text of whatever the player's progression value is
@@ -1179,15 +1190,25 @@
 		ctx.fillText(player.progression, player.adjmatrix.lastAdded.data.x - 80, player.adjmatrix.lastAdded.data.y - 70);
 		}
 	}
+	async function debugDefense () {
+	let form = new DefensiveFormation("3-4", "base", frontRules["42 Over G"])
+	console.log(data.props.formations[0])
+	let offForm = makeFormation(players, "testing")
+	defensivePlayers = getDefensivePlayers(form, offForm)
+	players = players.concat(defensivePlayers)
+	// clear the canvas
+	clearCanvas(ctx);
+	// draw the players
+	drawPlayers();
+	} 
     
-
 </script>
 
 <div class=" flex "
 bind:clientWidth={canvasDiv}
 >
 <!-- a side bar to display some text content -->
-	<div class="h-screen bg-gray-200 mx-auto">
+	<div class="h-screen  mx-auto bg-gradient-to-r from-white to-gray-100 rounded-b-xl border-4 border-gray-400">
 		<div class="tabs w-96 ml-2">
 			{#each tabs as tab, index}
 			  <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -1207,7 +1228,7 @@ bind:clientWidth={canvasDiv}
 				<!-- a visual description of the keys' i.e controls of drawing on the canvas -->
 				<!-- a div with 10 rows of content that is centered in the tab -->
 				<div class="flex flex-col items-center">
-					<h1 class="text-3xl font-bold text-center my-5">Controls</h1>
+					<h1 class="text-3xl font-bold text-center my-5 text-transparent bg-gradient-to-r from-violet-700 to-blue-600 bg-clip-text">Controls</h1>
 					<div class="flex flex-col items-center">
 						<div class = "">
 						<kbd class="kbd">shift</kbd>
@@ -1216,7 +1237,7 @@ bind:clientWidth={canvasDiv}
 						=
 						Add Player	 </div>
 						<div>
-							<h2 class="text-3xl font-bold text-center my-5">Drawing</h2>
+							<h2 class="text-3xl font-bold text-center my-5 text-transparent bg-gradient-to-r from-violet-700 to-blue-600 bg-clip-text">Drawing</h2>
 							
 							<kbd class="kbd">shift</kbd>
 							=
@@ -1239,7 +1260,7 @@ bind:clientWidth={canvasDiv}
 							=
 							Make Dashed-Line 
 						</div>						
-						<h2 class="text-3xl font-bold text-center">Editing</h2>
+						<h2 class="text-3xl font-bold text-center text-transparent bg-gradient-to-r from-violet-700 to-blue-600 bg-clip-text">Editing</h2>
 						<div class = "my-5">
 						<kbd class="kbd">s</kbd>
 							+
@@ -1304,7 +1325,9 @@ bind:clientWidth={canvasDiv}
 				<h1 class="text-3xl font-bold text-center my-5">Pre-Set's</h1>
 				<div class="flex flex-col items-center">
 					<h2 class="text-xl font-bold text-center my-5">Formations</h2>					
-					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-xs" bind:value={formationInput}>
+					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-xs" bind:value={formationInput}
+					on:click={changingName}
+					>
 					{#if formationInput != null && formationInput != "" && data.props.formations != null}
 					<ul class="dropdown-content menu p-2 bg-white rounded-b w-full overflow-y-auto">				
 						{#each data.props.formations as formation}
@@ -1317,7 +1340,17 @@ bind:clientWidth={canvasDiv}
 				</div>
 				<div class="flex flex-col items-center">
 					<h2 class="text-xl font-bold text-center my-5">Play Name</h2>
-					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-xs" >
+					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-xs" bind:value={playInput}
+					on:click={changingName}
+					>
+					{#if playInput != null && playInput != "" && data.props.plays != null}
+					<ul class="dropdown-content menu p-2 bg-white rounded-b w-full overflow-y-auto max-h-32">				
+						{#each data.props.plays as play}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<li><a on:click={() => loadPlay(data.props.user.uid, play, db)}>{play}</a></li>
+						{/each}
+					</ul>
+					{/if}
 				</div>
 				<div class="flex flex-col items-center">
 					<h2 class="text-xl font-bold text-center my-5">Play-Name</h2>
@@ -1330,6 +1363,8 @@ bind:clientWidth={canvasDiv}
 				
 				<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={() => storeFormation(players, formationName, data.props.user.uid, db)}>Add Formation</button>
 				<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={() => storePlay(db, data.props.user.uid, playName, players)}>Add Play</button>
+				<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={() => debugDefense()}>Auto Align 42 Over G</button>
+
 			</div>
 		</div>
 			 

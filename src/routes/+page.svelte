@@ -4,7 +4,7 @@
 </script>
 <!-- a single page website style slidable website -->
 <!-- a wavy background to be placed vertcailly underneath the navbar -->
-    <svg class="wave" viewBox="0 0 450 150" preserveAspectRatio="none" style="height: 300px; width: 100%;">
+    <svg class="wave" viewBox="0 0 450 150" preserveAspectRatio="none" style="height: 200px; width: 100%;">
         <path d="M-1.42,49.98 C150.00,150.00 349.99,-49.98 501.42,49.98 L500.00,150.00 L0.00,150.00 Z" style="stroke: none; fill: #f3f4f6;"></path>
     </svg>
 <!-- start with the content -->

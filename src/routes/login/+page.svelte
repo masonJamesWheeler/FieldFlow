@@ -1,11 +1,12 @@
 <script lang="ts"> 
-import {app} from "../../lib/firebase";
+import {app, auth} from "../../lib/firebase";
 import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
 import { goto } from '$app/navigation';
 
+
 let email = "";
 let password = "";
-let auth = getAuth(app);
+
 
 // function to attempt to log in the user
 async function attemptLogin(email, password) {
