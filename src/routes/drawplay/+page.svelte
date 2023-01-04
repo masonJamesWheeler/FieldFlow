@@ -27,7 +27,9 @@
 	let originalFormations:string[] = [];
 	let formationInput:string = ""
 	let playInput:string = ""
-
+	let ogColor:string = "black"
+	let formationName:string = "";
+	let playName:string = "";
 
 	// intialize variables to hold the current player being edited
 	let current_player: Player = null;
@@ -48,10 +50,9 @@
     let addOption: boolean = false;
 	let typing: boolean = false;
 	let motion: boolean = false;
-	let formationName:string = "";
-	let playName:string = "";
+	let addingDefense: boolean = false;
 	// initialize the tabs
-	let tabs = [ 'Player-Editor', 'Ctrls', 'Shortcuts']
+	let tabs = [ 'Player-Editor', 'Ctrls', 'Search']
 	let activeTabIndex = 1
 
 	// store the mouse position
@@ -164,7 +165,6 @@
 				currPlayer.x = currPlayer.adjmatrix.firstAdded.data.x;
 				currPlayer.y = currPlayer.adjmatrix.firstAdded.data.y;
 			}
-			drawOval(currPlayer.x, currPlayer.y, currPlayer.color, currPlayer);
 			// traverse the adjacency matrix
 			currPlayer.adjmatrix.nodes.forEach((node) => {
 
@@ -173,6 +173,33 @@
 					// if the node is a bezier node, draw a bezier curve
 					if (adjNode.data.cp && adjNode.data.cpx != null && adjNode.data.cpy != null) {
 						if (currPlayer.adjmatrix.firstAdded == node) {
+							// if the control point is within 80 vertical pixels of the player draw the start of the line from the side
+							// of the player instead of the top
+							if (adjNode.data.cpy - currPlayer.y < 80) {
+								// if we are to the left of the node draw the line from the left side of the player
+								if (adjNode.data.cpx - currPlayer.x < 0) {
+									drawBezier(
+										node.data.x,
+										node.data.y,
+										adjNode.data.x,
+										adjNode.data.y,
+										adjNode.data.cpx,
+										adjNode.data.cpy,
+										currPlayer.color
+									);
+								} else {
+									// if we are to the right of the node draw the line from the right side of the player
+									drawBezier(
+										node.data.x,
+										node.data.y,
+										adjNode.data.x,
+										adjNode.data.y,
+										adjNode.data.cpx,
+										adjNode.data.cpy,
+										currPlayer.color
+									);
+								}
+							} else 
 							drawBezier(
 								node.data.x,
 								node.data.y-45,
@@ -288,10 +315,11 @@
 				drawProgression(currPlayer);
 			}
 		}
-        // to draw a player's name if they're being edited
-        if (editingPlayer != null) {
-        //showName();
-        }
+        // iterate through the players and add the ovals last
+		players.forEach((currPlayer) => {
+				drawOval(currPlayer.x, currPlayer.y, currPlayer.color, currPlayer);
+			
+		});
 	}
 
 	// function to add a player and start creating their path
@@ -306,19 +334,19 @@
 		if (magnetX && magnetY) {
 			n = new Node(magnetCoords.x, magnetCoords.y, null, null, 'black', false, false, false, false);
 			graph = new Graph<Node>(comparator, n);
-			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null); 
+			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null, addingDefense); 
 		} else if (magnetX) {
 			n = new Node(magnetCoords.x, m.y, null, null, 'black', false, false, false, false);
 			graph = new Graph<Node>(comparator, n);
-			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null);
+			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null, addingDefense);
 		} else if (magnetY) {
 			n = new Node(m.x, magnetCoords.y, null, null, 'black', false, false, false, false);
 			graph = new Graph<Node>(comparator, n);
-			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null);
+			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null, addingDefense);
 		} else {
 			n = new Node(m.x, m.y, null, null, 'black', false, false, false, false);
 			graph = new Graph<Node>(comparator, n);
-			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null);
+			p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null, addingDefense);
 		}
 		// create the graph
 		// create a new player
@@ -352,7 +380,7 @@
 					currentNode.y + m2.y * length,
 					null,
 					null,
-					'black',
+					current_player.color,
 					keysPressed['a'],
 					false,
 					false,
@@ -364,7 +392,7 @@
 					currentNode.y + m2.y * length,
 					null,
 					null,
-					'black',
+					current_player.color,
 					keysPressed['a'],
 					false,
 					false,
@@ -377,7 +405,7 @@
 				currentNode = n;
 			} else {
 				if (keysPressed['d']) {
-					let n = new Node(m.x, m.y, null, null, 'black', dashed, true, false, false);
+					let n = new Node(m.x, m.y, null, null, current_player.color, dashed, true, false, false);
 					current_player.adjmatrix.addNewNode(n);
 					current_player.adjmatrix.addEdge(currentNode, n);
 					currentNode = n;
@@ -390,7 +418,7 @@
 					current_player.adjmatrix.lastAdded.data.cpy = m.y;
 				} else {
 					
-					let n = new Node(m.x, m.y, null, null, 'black', dashed, false, false, false);
+					let n = new Node(m.x, m.y, null, null, current_player.color, dashed, false, false, false);
 					current_player.adjmatrix.addNewNode(n);
 					current_player.adjmatrix.addEdge(currentNode, n);
 					// adjust the current node
@@ -405,6 +433,7 @@
 			console.log(editingPlayer);
 			if (editingPlayer != null) {
 				editing = true;
+				ogColor = editingPlayer.color;
 				editingPlayer.color = 'gray';
 			} else if (!editing && !drawing && show) {
                 // if we are not clicking on a line segment, then we are adding a new player
@@ -443,6 +472,7 @@
 						// if we are clicking on a node, then we are dragging
 						editNode = node.data;
 						dragging = true;
+						const originalLocation = {x: node.data.x, y: node.data.y};
 						// set the current node to the node we are dragging
 						currentNode = node.data;
 						// set the current player to the player we are editing
@@ -725,21 +755,16 @@
 	// function to escape currently drawing a player's path
 	function escape() {
 		
-		// change all the players' colors to black
-		for (let i = 0; i < players.length; i++) {
-			players[i].color = 'black';
-		}
-	
 		// if the user is currently drawing
 		if (drawing) {
 			// set current player's color to black if it is not null
 			if (current_player != null) {
-				current_player.color = 'black';
+				current_player.color = ogColor;
 			}
 			// if the editing player is not null
 			if (editingPlayer != null) {
 				// set the editing player's color to black
-				editingPlayer.color = 'black';
+				editingPlayer.color = ogColor
 			}
 			// set editing to false
 			editing = false;
@@ -757,13 +782,10 @@
 		}
 		if (editing) {
 			// set current player's color to black if it is not null
-			if (current_player != null) {
-				current_player.color = 'black';
-			}
 			// if editingplayer is not null
 			if (editingPlayer != null) {
 				// set the editing player's color to black
-				editingPlayer.color = 'black';
+				editingPlayer.color = ogColor
 			}
 			// set editing to false
 			editing = false;
@@ -776,6 +798,8 @@
 			// set the edit node to null
 			editNode = null;
 		}
+		// reset the ogColor value
+		ogColor = "black"
 		// reset the magnet values 
 		typing = false
 		// reset length
@@ -922,33 +946,32 @@
 	//function to draw an oval when the mouse is clicked on the canvas
 	function drawOval(x1, y1, color, currPlayer) {
 		if (ctx != null) {
-			if (currPlayer != null) {
+			if (currPlayer != null && !currPlayer.defense) {
 				if (currPlayer.position == 'C' || currPlayer.position == 'c'|| currPlayer.position == 'Center' || currPlayer.position == 'center') {
 					if (players.length == 1) {
 						let graph: Graph<Node>;
 						// create the rest of the offensive line
-						
 						let i = new Node(currPlayer.x-250, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, i);
-						let a = new Player(currPlayer.x-250 ,currPlayer.y,'Black', 'LT', 'route/job', graph, null)
+						let a = new Player(currPlayer.x-250 ,currPlayer.y,'Black', 'LT', 'route/job', graph, null, false)
 						a.adjmatrix.addNewNode(i);
 						players.push(a);
 
 						let j = new Node(currPlayer.x-125, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, j);
-					    let b = new Player(currPlayer.x-125 ,currPlayer.y,'Black', 'LG', 'route/job', graph, null)
+					    let b = new Player(currPlayer.x-125 ,currPlayer.y,'Black', 'LG', 'route/job', graph, null, false)
 						b.adjmatrix.addNewNode(j);
 						players.push(b);
 
 						let k = new Node(currPlayer.x+125, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, k);
-						let c = new Player(currPlayer.x+125 ,currPlayer.y,'Black', 'RG', 'route/job', graph, null)
+						let c = new Player(currPlayer.x+125 ,currPlayer.y,'Black', 'RG', 'route/job', graph, null, false)
 						c.adjmatrix.addNewNode(k);
 						players.push(c);
 
 						let m = new Node(currPlayer.x+250, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, m);
-						let d = new Player(currPlayer.x+250 ,currPlayer.y,'Black', 'RT', 'route/job', graph, null)
+						let d = new Player(currPlayer.x+250 ,currPlayer.y,'Black', 'RT', 'route/job', graph, null, false)
 						d.adjmatrix.addNewNode(m);
 						players.push(d);
 					}
@@ -979,9 +1002,8 @@
 			ctx.ellipse(x1, y1, 40, 40, 0, 0, 2 * Math.PI);
 			ctx.stroke();
 				}
-			} else {
-			// fill the inside of the oval with the color white
-			ctx.fillStyle = 'white';
+			} else if (players.length == 0 || currPlayer == null)  {
+				ctx.fillStyle = 'white';
 			ctx.beginPath();
 			ctx.ellipse(x1, y1, 40, 40, 0, 0, 2 * Math.PI);
 			ctx.fill();
@@ -1001,9 +1023,13 @@
 				if (currPlayer.position.length > 1) {
                     ctx.font = "45px Georgia bold"
                 } else {
+				if (currPlayer.defense) {
+					ctx.font = '80px Georgia bold';
+				} else {
                 ctx.font = '65px Georgia bold';
                 }
-				ctx.fillStyle = 'black';
+			}
+				ctx.fillStyle = color;
                 if (currPlayer.position.length > 1) {
                     ctx.fillText(currPlayer.position, x1 - 30, y1 + 18);
                 } else {
@@ -1016,7 +1042,7 @@
 				ctx.font = '65px Georgia bold';
 				ctx.fillStyle = 'blue';
 				ctx.fillText(currPlayer.job, x1 - 62, y1 + 120);
-				ctx.fillStyle = 'black';
+				ctx.fillStyle = color;
 			}
 		}
 		}
@@ -1201,15 +1227,28 @@
 	// draw the players
 	drawPlayers();
 	} 
+	function clearPlay () {
+		players = []
+		// reset all the variables
+		editingPlayer = null
+		editNode = null
+		currentNode = null
+		current_player = null
+		// clear the canvas
+		clearCanvas(ctx);
+		// draw the players
+		drawPlayers();
+	}
     
+	
 </script>
 
 <div class=" flex "
 bind:clientWidth={canvasDiv}
 >
 <!-- a side bar to display some text content -->
-	<div class="h-screen  mx-auto bg-gradient-to-r from-white to-gray-100 rounded-b-xl border-4 border-gray-400">
-		<div class="tabs w-96 ml-2">
+	<div class="h-screen  mx-auto bg-gradient-to-r from-white to-gray-100 rounded-b-xl border-r-4 border-slate-800">
+		<div class="tabs w-96 justify-center">
 			{#each tabs as tab, index}
 			  <!-- svelte-ignore a11y-click-events-have-key-events -->
 			  <!-- svelte-ignore a11y-missing-attribute -->
@@ -1305,9 +1344,21 @@ bind:clientWidth={canvasDiv}
 					</div>
 					<div class="flex flex-col items-center">
 						<h2 class="text-xl font-bold text-center my-5">Player Color</h2>
-						<input type="text" class="border-2 border-black rounded-md"  />
+						<!-- a row of 4 colors for a user to click on -->
+						<div class="flex flex-row">
+							<div class="flex flex-row items-center gap-x-4">
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<div class="w-10 h-10 rounded-full bg-red-500" on:click={() => ogColor = "red"}></div>
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<div class="w-10 h-10 rounded-full bg-blue-500" on:click={() => ogColor = "blue"}></div>
+							
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<div class="w-10 h-10 rounded-full bg-green-500" on:click={() => ogColor = "green"}></div>
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<div class="w-10 h-10 rounded-full bg-black" on:click={() => ogColor = "black"}></div>
+							</div>
 					</div>
-					
+					</div>
 					<h2 class="text-xl font-bold text-center my-5">Select a player to edit</h2>
 					
 					<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={addPlayer}>Add Player</button>
@@ -1322,17 +1373,17 @@ bind:clientWidth={canvasDiv}
 		  {#if activeTabIndex == 2}
 		  <div>
 			<div class="flex flex-col items-center">
-				<h1 class="text-3xl font-bold text-center my-5">Pre-Set's</h1>
+				<h1 class="text-3xl font-bold text-center my-5">Search By</h1>
 				<div class="flex flex-col items-center">
-					<h2 class="text-xl font-bold text-center my-5">Formations</h2>					
-					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-xs" bind:value={formationInput}
+					<h2 class="text-xl font-bold text-center my-2">Formations</h2>					
+					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-s" bind:value={formationInput}
 					on:click={changingName}
 					>
 					{#if formationInput != null && formationInput != "" && data.props.formations != null}
-					<ul class="dropdown-content menu p-2 bg-white rounded-b w-full overflow-y-auto">				
+					<ul class="p-2 bg-gray-200 rounded-b w-full max-h-32 max-w-xs text-center">				
 						{#each data.props.formations as formation}
 						<!-- svelte-ignore a11y-missing-attribute -->
-						<li><a on:click={() => loadFormation(formation, ctx, canvas, img, data.props.user.uid)}>{formation}</a></li>
+						<li><a class = "text-black font-bold hover:cursor-pointer hover:text-gray-600 text-center" on:click={() => loadFormation(formation, ctx, canvas, img, data.props.user.uid)}>{formation}</a></li>
 						{/each}
 					</ul>
 					{/if}
@@ -1340,14 +1391,14 @@ bind:clientWidth={canvasDiv}
 				</div>
 				<div class="flex flex-col items-center">
 					<h2 class="text-xl font-bold text-center my-5">Play Name</h2>
-					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-xs" bind:value={playInput}
+					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-s" bind:value={playInput}
 					on:click={changingName}
 					>
 					{#if playInput != null && playInput != "" && data.props.plays != null}
-					<ul class="dropdown-content menu p-2 bg-white rounded-b w-full overflow-y-auto max-h-32">				
+					<ul class="p-2 bg-gray-200 rounded-b w-full max-h-32 max-w-xs overflow-y-auto text-center">				
 						{#each data.props.plays as play}
 						<!-- svelte-ignore a11y-missing-attribute -->
-						<li><a on:click={() => loadPlay(data.props.user.uid, play, db)}>{play}</a></li>
+						<li><a class = "text-black font-bold hover:text-gray-600 text-center hover:cursor-pointer"  on:click={() => loadPlay(data.props.user.uid, play, db)}>{play}</a></li>
 						{/each}
 					</ul>
 					{/if}
@@ -1380,11 +1431,24 @@ bind:clientWidth={canvasDiv}
 		on:mousemove={showProjection}
 		width="2600"
 		height="2600"
-		style="width:800px; height:650px;"
-		class="mx-auto justify-center my-10"
+		style="width:750px; height:615px;"
+		class="mx-auto justify-center mt-2"
 		id="canvas"
 	/>
-    
+    <!-- a control center that is aligned horizontally below the canvas, below it -->
+	<div class="card w-full bg-base-300 text-neutral-content mb-4 h-36">
+		<div class="card-body items-center text-center">
+		  <div class="flex flex-row">
+			<div class="flex flex-row items-center gap-12">
+				<btn class = "btn btn-error text-white" on:click={() => clearPlay()}>Clear</btn>
+				<label for="my-modal-4" class="btn btn-primary">Save Formation</label>
+				<label for="my-modal-5" class="btn btn-primary">Save Play</label>
+				<btn class = "btn btn- text-white">Add to a install or group?</btn>
+
+			</div>
+		</div>
+		</div>
+	  </div>
 
 </div>
 </div>
@@ -1392,3 +1456,37 @@ bind:clientWidth={canvasDiv}
 <div class="mx-auto justify-center my-10">
 	<p>Mouse coordinates: {m.x}, {m.y}</p>
 </div>
+
+<input type="checkbox" id="my-modal-4" class="modal-toggle" />
+<label for="my-modal-4" class="modal cursor-pointer">
+  <label class="modal-box relative" for="">
+	<div class="flex flex-col items-center">
+		<h2 class="text-2xl font-bold text-center my-2">Formation Name</h2>
+		<input type="text" class="input input-primary" bind:value={formationName} />
+	</div>
+	<div class="modal-action">
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<label for="my-modal-4" class="btn btn-success text-white" on:click={() => storeFormation(players, formationName, data.props.user.uid, db)}>Submit</label>
+	  </div>
+   </label>
+</label>
+<input type="checkbox" id="my-modal-5" class="modal-toggle" />
+<label for="my-modal-5" class="modal cursor-pointer">
+  <label class="modal-box relative" for="">
+	<div class="flex flex-col items-center">
+		<h2 class="text-2xl font-bold text-center my-2">Play Name</h2>
+		<input type="text" class="input input-primary" bind:value={playName} />
+		{#if playName != null && playName != ""}
+		<h2 class="text-xl font-semibold text-center my-2">Save Formation at the same time?</h2>
+		<input type="text" class="input input-primary" placeholder= "Optional - Formation Name" bind:value={formationName} />
+		<h2 class = "text-m text-center">note: if formation already exists the existing formation will be overwritten</h2>
+		{/if}
+	</div>
+	<div class="modal-action">
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<label for="my-modal-5" class="btn btn-success text-white" on:click={() => storePlay(db, data.props.user.uid, playName, players)}
+			on:click={() => storeFormation(players, formationName, data.props.user.uid, db)}
+			>Submit</label>
+	  </div>
+   </label>
+</label>

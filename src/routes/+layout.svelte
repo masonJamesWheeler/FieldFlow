@@ -16,7 +16,6 @@
   if (user) {
     const uid = user.uid;
     userLoaded = true;
-    // ...
   } else {
     // we are not logged in
   }

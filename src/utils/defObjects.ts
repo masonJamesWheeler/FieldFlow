@@ -13,12 +13,12 @@ import { Graph } from './adjMatrix';
 
 export let frontRules = {
     "42 Over G": {
-        "E": {tech:"7", frontside:true, depth:100},
-        "T": {tech:"3", frontside:true, depth:100},
-        "N": {tech:"2i", frontside:false, depth:100},
-        "$": {tech:"5", frontside:false, depth:100},
-        "W": {tech:"3", frontside:false, depth:400},
-        "M": {tech:"3", frontside:true, depth:400},
+        "E": {tech:"7", frontside:true, depth:115},
+        "T": {tech:"3", frontside:true, depth:115},
+        "N": {tech:"2i", frontside:false, depth:115},
+        "$": {tech:"5", frontside:false, depth:115},
+        "W": {tech:"3", frontside:false, depth:430},
+        "M": {tech:"3", frontside:true, depth:430},
          
     }
 }
@@ -117,135 +117,135 @@ export function makeDefensePlayer (position:string, rule:any, strength:string, o
         if (tech == "0") {
             let i = new Node(refPosition.x, refPosition.y, null, null, 'black', false, false, false, false);						
 			let graph = new Graph<Node>(comparator, i);
-            return new Player(refPosition.x, refPosition.y - rule.depth,"black", position, null,graph, null )
+            return new Player(refPosition.x, refPosition.y - rule.depth,"black", position, null,graph, null, true )
         } else if (tech == "1") {
             if (strength == "left") {
                 if (frontside) {
-                    let i = new Node(refPosition.x-40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-30, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x+40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+30, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             }
         } else if (tech == 2) {
             let i = new Node(refPosition.x, refPosition.y-depth, null, null, 'black', false, false, false, false);
             let graph = new Graph<Node>(comparator, i);
-            return new Player(refPosition.x, refPosition.y-depth,"black", position, null,graph, null )
+            return new Player(refPosition.x, refPosition.y-depth,"black", position, null,graph, null, true )
         } else if (tech == "2i") {
             if (strength == "left") {
                 if (frontside) {
-                    let i = new Node(refPosition.x+40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+30, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x-40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-30, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             } else if (strength == "right") {
                 if (frontside) {
-                    let i = new Node(refPosition.x-40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-30, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x+40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+30, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             } 
         } else if (tech == "3") {
             if (strength == "left") {
                 if (frontside) {
-                    let i = new Node(refPosition.x-40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-30, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x+40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+30, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             } else if (strength == "right") {
                 if (frontside) {
-                    let i = new Node(refPosition.x+40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+30, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x-40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-30, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             } 
         } else if (tech == "4") {
             let i = new Node(refPosition.x, refPosition.y-depth, null, null, 'black', false, false, false, false);
             let graph = new Graph<Node>(comparator, i);
-            return new Player(refPosition.x, refPosition.y-depth,"black", position, null,graph, null )
+            return new Player(refPosition.x, refPosition.y-depth,"black", position, null,graph, null, true )
         } else if (tech == "4i") {
             if (strength == "left") {
                 if (frontside) {
-                    let i = new Node(refPosition.x+40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+30, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x-40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-30, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             } else if (strength == "right") {
                 if (frontside) {
-                    let i = new Node(refPosition.x-40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-30, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x+40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+30, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+30, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             } 
         } else if (tech == "5") {
             if (strength == "left") {
                 if (frontside) {
-                    let i = new Node(refPosition.x-40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-34, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-34, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x+40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+34, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+34, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             } else if (strength == "right") {
                 if (frontside) {
-                    let i = new Node(refPosition.x+40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+34, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+34, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x-40, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-34, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-40, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-34, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             } 
         } else if (tech == "7") {
             if (strength == "left") {
                 if (frontside) {
-                    let i = new Node(refPosition.x-100, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-70, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-80, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-70, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x+80, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+70, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+80, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+70, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             } else if (strength == "right") {
                 if (frontside) {
-                    let i = new Node(refPosition.x+80, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x+70, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x+80, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x+70, refPosition.y-depth,"black", position, null,graph, null, true )
                 } else {
-                    let i = new Node(refPosition.x-80, refPosition.y-depth, null, null, 'black', false, false, false, false);
+                    let i = new Node(refPosition.x-70, refPosition.y-depth, null, null, 'black', false, false, false, false);
                     let graph = new Graph<Node>(comparator, i);
-                    return new Player(refPosition.x-80, refPosition.y-depth,"black", position, null,graph, null )
+                    return new Player(refPosition.x-70, refPosition.y-depth,"black", position, null,graph, null, true )
                 }   
             } 
         }

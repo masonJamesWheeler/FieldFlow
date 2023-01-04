@@ -12,6 +12,7 @@ import type { Graph as GraphType } from './adjMatrix';
 		job: string;
 		adjmatrix: GraphType<Node>;
 		progression: string
+		defense: boolean;
 		constructor(
 			x: number,
 			y: number,
@@ -19,7 +20,8 @@ import type { Graph as GraphType } from './adjMatrix';
 			position: string,
 			job: string,
 			adjmatrix: GraphType<Node>,
-			progression: string
+			progression: string,
+			defense: boolean
 		) {
 			this.x = x;
 			this.y = y;
@@ -28,6 +30,7 @@ import type { Graph as GraphType } from './adjMatrix';
 			this.job = job;
 			this.adjmatrix = adjmatrix;
 			this.progression = progression;
+			this.defense = defense;
 		}
 	}
 

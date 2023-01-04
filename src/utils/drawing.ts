@@ -110,25 +110,25 @@ export function drawLine(
 						
 						let i = new Node(currPlayer.x-250, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, i);
-						let a = new Player(currPlayer.x-250 ,currPlayer.y,'Black', 'LT', 'route/job', graph, null)
+						let a = new Player(currPlayer.x-250 ,currPlayer.y,'Black', 'LT', 'route/job', graph, null, true)
 						a.adjmatrix.addNewNode(i);
 						players.push(a);
 
 						let j = new Node(currPlayer.x-125, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, j);
-					    let b = new Player(currPlayer.x-125 ,currPlayer.y,'Black', 'LG', 'route/job', graph, null)
+					    let b = new Player(currPlayer.x-125 ,currPlayer.y,'Black', 'LG', 'route/job', graph, null, true)
 						b.adjmatrix.addNewNode(j);
 						players.push(b);
 
 						let k = new Node(currPlayer.x+125, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, k);
-						let c = new Player(currPlayer.x+125 ,currPlayer.y,'Black', 'RG', 'route/job', graph, null)
+						let c = new Player(currPlayer.x+125 ,currPlayer.y,'Black', 'RG', 'route/job', graph, null, true)
 						c.adjmatrix.addNewNode(k);
 						players.push(c);
 
 						let m = new Node(currPlayer.x+250, currPlayer.y, null, null, 'black', false, false, false, false);						
 						graph = new Graph<Node>(comparator, m);
-						let d = new Player(currPlayer.x+250 ,currPlayer.y,'Black', 'RT', 'route/job', graph, null)
+						let d = new Player(currPlayer.x+250 ,currPlayer.y,'Black', 'RT', 'route/job', graph, null, true)
 						d.adjmatrix.addNewNode(m);
 						players.push(d);
 					}
@@ -320,7 +320,7 @@ export function drawLine(
     }
 // function to add a player and start creating their path
 export function addPlayer(magnetX:boolean
-    , magnetY:boolean, magnetCoords, m, players:Player[], editingPlayer:Player, ctx:CanvasRenderingContext2D, current_player:Player, currentNode:Node, drawing:boolean, editing:boolean, m2) {
+    , magnetY:boolean, magnetCoords, m, players:Player[], editingPlayer:Player, ctx:CanvasRenderingContext2D, current_player:Player, currentNode:Node, drawing:boolean, editing:boolean, m2, defense:boolean) {
     let n;
     let p
     let graph
@@ -331,19 +331,19 @@ export function addPlayer(magnetX:boolean
     if (magnetX && magnetY) {
         n = new Node(magnetCoords.x, magnetCoords.y, null, null, 'black', false, false, false, false);
         graph = new Graph<Node>(comparator, n);
-        p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null); 
+        p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null, defense); 
     } else if (magnetX) {
-        n = new Node(magnetCoords.x, m.y, null, null, 'black', false, false, false, false);
+        n = new Node(magnetCoords.x, m.y, null, null, 'black', false, false, false, defense);
         graph = new Graph<Node>(comparator, n);
-        p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null);
+        p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null, defense);
     } else if (magnetY) {
-        n = new Node(m.x, magnetCoords.y, null, null, 'black', false, false, false, false);
+        n = new Node(m.x, magnetCoords.y, null, null, 'black', false, false, false, defense);
         graph = new Graph<Node>(comparator, n);
-        p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null);
+        p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null, defense);
     } else {
-        n = new Node(m.x, m.y, null, null, 'black', false, false, false, false);
+        n = new Node(m.x, m.y, null, null, 'black', false, false, false, defense);
         graph = new Graph<Node>(comparator, n);
-        p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null);
+        p = new Player(m.x, m.y, 'black', 'pos', 'route/job', graph, null, defense);
     }
     // create the graph
     // create a new player
