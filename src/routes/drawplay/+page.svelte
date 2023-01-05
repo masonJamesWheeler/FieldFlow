@@ -38,7 +38,6 @@
 	let index: number = null;
 	let editNode: Node = null;
 	let editingPlayer: Player = null;
-	
 	// initialize booleans to hold the state of the editor
 	let drawing: boolean = false;
 	let editing: boolean = false;
@@ -55,6 +54,40 @@
 	// initialize the tabs
 	let tabs = [ 'Player-Editor', 'Ctrls', 'Search']
 	let activeTabIndex = 1
+
+	// selected values for when storing the play
+	let name = '';
+	let run_or_pass = '';
+	let run = 'Run';
+	let pass = 'Pass';
+	let rpo = 'RPO';
+	let long = 'Third and Long';
+	let medium = 'Third and Medium';
+	let short = 'Third and Short';
+	let inches = 'Third and Inches';
+	let extralong = 'Third and Extra-Long';
+	let twobytwo = '2x2';
+	let threebyone = '3x1';
+	let quads = 'Quads';
+	let ten = '10';
+	let eleven = '11';
+	let twelve = '12';
+	let thirteen = '13';
+	let twentone = '21';
+	let twentytwo = '22';
+	let twentythree = '23';
+	let twenty = '20';
+	let personnel = '';
+	let formation = '';
+	let shift = '';
+	let concept = '';
+	let numXnum = '';
+	let down_dist = '';
+	let answer = '';
+
+	
+
+
 
 	// store the mouse position
 	let m = { x: 0, y: 0 };
@@ -1520,19 +1553,67 @@ bind:clientWidth={canvasDiv}
   <label class="modal-box relative" for="">
 	<div class="flex flex-col items-center">
 		<h2 class="text-2xl font-bold text-center my-2">Play Name</h2>
-		<input type="text" class="input input-primary" bind:value={playName}
+		<input type="text" class="input input-secondary" placeholder="Play" bind:value={playName}
 		on:click={userTyping} />
 		{#if playName != null && playName != ""}
-		<h2 class="text-xl font-semibold text-center my-2">Save Formation at the same time?</h2>
-		<input type="text" class="input input-primary" placeholder= "Optional - Formation Name" bind:value={formationName}
+		<h2 class="text-xl font-semibold text-center my-2">Formation Name</h2>
+		<input type="text" class="input input-secondary" placeholder= "Formation" bind:value={formationName}
 		on:click={userTyping} />
-		<h2 class = "text-m text-center">note: if formation already exists the existing formation will be overwritten</h2>
+		<h2 class = "text-m text-center">note: leaving blank will negate filterable features</h2>
+		<div class = "grid grid-col-1 w-full gap-y-2 ">
+		<select
+					class="select select-secondary w-full"
+					bind:value={down_dist}
+					on:change|preventDefault={() => (answer = '')}
+				>
+					<option value="" selected data-default disabled>Third-Down Preference</option>
+					<option>{inches}</option>
+					<option>{short}</option>
+					<option>{medium}</option>
+					<option>{long}</option>
+					<option>{extralong}</option>
+				</select>
+				<select
+					class="select select-secondary w-full col-span-1 text-l font-bold text-slate-800"
+					bind:value={personnel}
+					on:change|preventDefault={() => (answer = '')}
+				>
+					<option value="" selected data-default disabled>personnel</option>
+					<option>{ten}</option>
+					<option>{eleven}</option>
+					<option>{twelve}</option>
+					<option>{thirteen}</option>
+					<option>{twenty}</option>
+					<option>{twentone}</option>
+					<option>{twentytwo}</option>
+					<option>{twentythree}</option>
+				</select>
+				<select
+					class="select select-secondary w-full col-span-1 text-l font-bold text-slate-800"
+					bind:value={numXnum}
+					on:change|preventDefault={() => (answer = '')}
+				>
+					<option value="" selected data-default disabled>Skill Alignment</option>
+					<option>{twobytwo}</option>
+					<option>{threebyone}</option>
+					<option>{quads}</option>
+				</select>
+				<select
+					class="select select-secondary w-full col-span-1 text-l font-bold text-slate-800"
+					bind:value={run_or_pass}
+					on:change|preventDefault={() => (answer = '')}
+				>
+					<option value="" selected data-default disabled>Run or Pass</option>
+					<option>{run}</option>
+					<option>{pass}</option>
+					<option>{rpo}</option>
+				</select>
+		</div>
 		{/if}
 	</div>
 	<div class="modal-action">
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<label for="my-modal-5" class="btn btn-indigo-700 text-white" on:click={() => storePlay(db, data.props.user.uid, playName, players)}
-			on:click={() => storeFormation(players, formationName, data.props.user.uid, db)}
+		<label for="my-modal-5" class="btn btn-indigo-700 text-white" on:click={() => storePlay(db, data.props.user.uid, playName, players, formationName,run_or_pass, personnel, numXnum, down_dist)}
 			>Submit</label>
 	  </div>
    </label>

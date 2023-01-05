@@ -4,6 +4,11 @@
 	import { onMount } from 'svelte';
 	export let data: PageData;
 
+
+    // create an array of the names of the user's selected plays
+    let selectedPlays = [];
+
+
 	onMount(async () => {
 		console.log(data);
 	});
@@ -11,17 +16,31 @@
 <!-- svelte-ignore a11y-missing-attribute -->
 <html data-theme = "emerald">
 <div class = "h-full w-screen bg-gradient-to-r from-slate-800 to-slate-700">
-    <section class="pt-20 pb-10 lg:pt-[120px] lg:pb-20">
-      <div class="container mx-auto justify-center place-items-center">
-        <h2 class = "text-white text-4xl font-extrabold tracking-tight self-center">Most Recent Installs</h2>
-        <div class="mx-4 flex bg-indigo-700 border-8 border-white rounded-3xl gap-x-2 shadow-2xl overflow-x-auto">
+    <section class="pt-10 pb-10 lg:pt-[60px] lg:pb-20">
+      <div class=" container mx-auto justify-center place-items-center">
+        <h2 class = "text-white text-4xl font-extrabold tracking-tight">Most Recent Installs</h2>
+        <div class="mx-4 flex flex-row bg-indigo-700 border-8 border-white rounded-3xl gap-x-2 shadow-2xl overflow-x-auto">
         <!-- div's that show folder icon's representing installs -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-24 h-24 my-10 mx-10">
+                <div class = "flex-col w-48 mx-4 h-56 overflow-hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-24 h-24 mt-10 mx-10">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
-              </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-24 h-24 my-10">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
-              </svg>
+            </svg>
+            <h2 class = "text-white font-bold tracking-tight mx-auto text-center overflow-hidden">Put the Name Here user adds a fuck ton of text and he adds more</h2>
+              </div>
+              <div class = "flex-col w-48 mx-4 h-56 overflow-hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-24 h-24 mt-10 mx-10">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+                </svg>
+                <h2 class = "text-white font-bold tracking-tight mx-auto text-center overflow-hidden">Put the Name Here user adds a fuck ton of text and he adds more</h2>
+                  </div>
+                  <div class = "flex-col w-48 mx-4 h-56 overflow-hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-24 h-24 mt-10 mx-10">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+                    </svg>
+                    <h2 class = "text-white font-bold tracking-tight mx-auto text-center overflow-hidden">Put the Name Here user adds a fuck ton of text and he adds more</h2>
+                      </div>
+              
+
         </div>
         </div>
         <div class = "">

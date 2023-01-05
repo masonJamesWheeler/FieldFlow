@@ -111,7 +111,7 @@ export function convertFormation(formation) {
 
 
 // function to store a entire play in the database
-export async function storePlay(db, user:string, name:string, players: playerType[]) {
+export async function storePlay(db, user:string, name:string, players: playerType[], formationName:string, run_or_pass:string, personnel:string, numXnum:string, down_dist:string) {
     // if any of the params are null then we want to throw an error
     if (db == null || user == null || name == null || players == null) {
         throw new Error("One of the params is null");
@@ -213,7 +213,7 @@ export async function storePlay(db, user:string, name:string, players: playerTyp
     let playerEleven = {position: players[10].position, color: players[10].color, nodes: playerElevenNodes, x: players[10].x, y: players[10].y,job: players[10].job, progression: players[10].progression};
     
 
-    await setDoc(doc(db, "FrontPage", user, "Plays", name), {name: name, playerOne: playerOne, playerTwo: playerTwo, playerThree: playerThree, playerFour: playerFour, playerFive: playerFive, playerSix: playerSix, playerSeven: playerSeven, playerEight: playerEight, playerNine: playerNine, playerTen: playerTen, playerEleven: playerEleven});
+    await setDoc(doc(db, "Users", user, "Plays", name), {name: name, playerOne: playerOne, playerTwo: playerTwo, playerThree: playerThree, playerFour: playerFour, playerFive: playerFive, playerSix: playerSix, playerSeven: playerSeven, playerEight: playerEight, playerNine: playerNine, playerTen: playerTen, playerEleven: playerEleven, formation:formationName, run_pass: run_or_pass, personnel: personnel, numXnum: numXnum, down_dist: down_dist});
     }
 }
 }
