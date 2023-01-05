@@ -30,7 +30,8 @@
 	let ogColor:string = "black"
 	let formationName:string = "";
 	let playName:string = "";
-
+	let chosenFront:string = "";
+	let chosenCoverage:string = "";
 	// intialize variables to hold the current player being edited
 	let current_player: Player = null;
 	let currentNode: Node = null;
@@ -165,6 +166,10 @@
 				currPlayer.x = currPlayer.adjmatrix.firstAdded.data.x;
 				currPlayer.y = currPlayer.adjmatrix.firstAdded.data.y;
 			}
+			ogColor = currPlayer.color;
+			if (currPlayer == editingPlayer) {
+				currPlayer.color = 'gray';
+			}
 			// traverse the adjacency matrix
 			currPlayer.adjmatrix.nodes.forEach((node) => {
 
@@ -267,7 +272,7 @@
 					}
 				}
 					// if the player is the current player, draw the nodes and control points
-					if (currPlayer == current_player || editingPlayer == currPlayer) {
+					if (editingPlayer == currPlayer) {
 						// and it isn't the first node
 						drawNodes(currPlayer);
 						drawNode(currPlayer.x, currPlayer.y, currPlayer.color);
@@ -314,12 +319,16 @@
 			if (currPlayer.progression != null) {
 				drawProgression(currPlayer);
 			}
+			if (currPlayer == editingPlayer) {
+				editingPlayer.color = ogColor
+				ogColor = "black"
+			}
 		}
         // iterate through the players and add the ovals last
 		players.forEach((currPlayer) => {
 				drawOval(currPlayer.x, currPlayer.y, currPlayer.color, currPlayer);
-			
 		});
+		
 	}
 
 	// function to add a player and start creating their path
@@ -433,8 +442,6 @@
 			console.log(editingPlayer);
 			if (editingPlayer != null) {
 				editing = true;
-				ogColor = editingPlayer.color;
-				editingPlayer.color = 'gray';
 			} else if (!editing && !drawing && show) {
                 // if we are not clicking on a line segment, then we are adding a new player
                 addPlayer();
@@ -494,6 +501,7 @@
 					}
 				});
 			} else {
+				
 				if (!keysPressed['s']) {
 				escape();
 				}
@@ -770,7 +778,7 @@
 			editing = false;
 			// set drawing to false
                 // set drawing to false
-                drawing = false;
+            drawing = false;
 			// set the current player to null
 			current_player = null;
 			// set the current node to null
@@ -1100,6 +1108,9 @@
 					) {
 						// return the line
 						success = true;
+						if (editingPlayer != null) {
+							editingPlayer.color = ogColor;
+						}
 						editingPlayer = currPlayer;
 					}
 					} else 
@@ -1121,6 +1132,9 @@
 					) {
 						// return the line
 						success = true;
+						if (editingPlayer != null) {
+							editingPlayer.color = ogColor;
+						}
 						editingPlayer = currPlayer;
 					}
 				});
@@ -1128,6 +1142,7 @@
 		}
 		// if success is false, then we didn't click on a line
 		if (!success) {
+			console.log(editingPlayer)
 			escape();
 			// clear canvas
 			clearCanvas(ctx);
@@ -1139,6 +1154,7 @@
 	//function to delete a player
 	function deletePlayer() {
 		// remove the player from the players array
+		if (editingPlayer != null) {
 		players.splice(players.indexOf(editingPlayer), 1);
 		//escape
 		magnetX = false;
@@ -1147,7 +1163,7 @@
 		magnetCoords.y = m.y
 		escape();
 		
-		
+		}
 	}
 
     // function to select and edit a player by clicking on their oval
@@ -1156,10 +1172,19 @@
         // traverse the players array
         for (let i = 0; i < players.length; i++) {
             // check the players x and y and see if our mouse is close to it
-            if (Math.sqrt(Math.pow(players[i].x - x, 2) + Math.pow(players[i].y - y, 2)) < 50) {
+            if (Math.sqrt(Math.pow(players[i].x - x, 2) + Math.pow(players[i].y - y, 2)) < 75) {
 				
                 // set the editing player to the player we clicked on
-                editingPlayer = players[i];
+				if (editingPlayer != null) {
+							editingPlayer.color = ogColor;
+							ogColor = "black"
+							editingPlayer = players[i];
+						} else {
+							editingPlayer = players[i];
+							ogColor = editingPlayer.color
+							editingPlayer.color = "gray"
+						}
+				
 				// change the tab to the editingPlayers tab
 				activeTabIndex = 0
                 // set found to true
@@ -1183,7 +1208,7 @@
         }
     }
     // if we click on a player's name then we want to be able to edit it
-	function changingName () {
+	function userTyping () {
 		typing = true
 	}
 	
@@ -1239,6 +1264,18 @@
 		// draw the players
 		drawPlayers();
 	}
+
+	function changeColor (color) {
+		if (editingPlayer != null) {
+			editingPlayer.color = color
+			editingPlayer = null
+			current_player = null
+			editing = false
+			drawing = false
+			clearCanvas(ctx);
+			drawPlayers();
+		}
+	}
     
 	
 </script>
@@ -1247,7 +1284,7 @@
 bind:clientWidth={canvasDiv}
 >
 <!-- a side bar to display some text content -->
-	<div class="h-screen  mx-auto bg-gradient-to-r from-white to-gray-100 rounded-b-xl border-r-4 border-slate-800">
+	<div class="h-screen  mx-auto bg-gradient-to-r from-white to-gray-100 rounded-b-xl border-r-4 border-slate-800 z-50">
 		<div class="tabs w-96 justify-center">
 			{#each tabs as tab, index}
 			  <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -1330,13 +1367,13 @@ bind:clientWidth={canvasDiv}
 					<div class="flex flex-col items-center">
 						<h2 class="text-xl font-bold text-center my-5">Position</h2>
 						<input type="text" class="border-2 border-black rounded-md" bind:value={editingPlayer.position}
-						on:click={changingName}
+						on:click={userTyping}
 						 />
 					</div>
 					<div class="flex flex-col items-center">
 						<h2 class="text-xl font-bold text-center my-5">Route/Job Notes</h2>
 						<input type="text" class="border-2 border-black rounded-md" bind:value={editingPlayer.job}
-						on:click={changingName} />
+						on:click={userTyping} />
 					</div>
 					<div class="flex flex-col items-center">
 						<h2 class="text-xl font-bold text-center my-5">Alert/Read Progression</h2>
@@ -1348,14 +1385,14 @@ bind:clientWidth={canvasDiv}
 						<div class="flex flex-row">
 							<div class="flex flex-row items-center gap-x-4">
 								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<div class="w-10 h-10 rounded-full bg-red-500" on:click={() => ogColor = "red"}></div>
+								<div class="w-10 h-10 rounded-full bg-red-500" on:click={() => changeColor("red")}></div>
 								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<div class="w-10 h-10 rounded-full bg-blue-500" on:click={() => ogColor = "blue"}></div>
+								<div class="w-10 h-10 rounded-full bg-blue-500" on:click={() => changeColor("blue")}></div>
 							
 								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<div class="w-10 h-10 rounded-full bg-green-500" on:click={() => ogColor = "green"}></div>
+								<div class="w-10 h-10 rounded-full bg-green-500" on:click={() => changeColor("green")}></div>
 								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<div class="w-10 h-10 rounded-full bg-black" on:click={() => ogColor = "black"}></div>
+								<div class="w-10 h-10 rounded-full bg-black" on:click={() => changeColor("black")}></div>
 							</div>
 					</div>
 					</div>
@@ -1376,8 +1413,8 @@ bind:clientWidth={canvasDiv}
 				<h1 class="text-3xl font-bold text-center my-5">Search By</h1>
 				<div class="flex flex-col items-center">
 					<h2 class="text-xl font-bold text-center my-2">Formations</h2>					
-					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-s" bind:value={formationInput}
-					on:click={changingName}
+					<input type="text" placeholder="Formation" class="input input-bordered input-secondary w-full max-w-s" bind:value={formationInput}
+					on:click={userTyping}
 					>
 					{#if formationInput != null && formationInput != "" && data.props.formations != null}
 					<ul class="p-2 bg-gray-200 rounded-b w-full max-h-32 max-w-xs text-center">				
@@ -1391,8 +1428,8 @@ bind:clientWidth={canvasDiv}
 				</div>
 				<div class="flex flex-col items-center">
 					<h2 class="text-xl font-bold text-center my-5">Play Name</h2>
-					<input type="text" placeholder="Formation" class="input input-bordered input-primary w-full max-w-s" bind:value={playInput}
-					on:click={changingName}
+					<input type="text" placeholder="Formation" class="input input-bordered input-secondary w-full max-w-s" bind:value={playInput}
+					on:click={userTyping}
 					>
 					{#if playInput != null && playInput != "" && data.props.plays != null}
 					<ul class="p-2 bg-gray-200 rounded-b w-full max-h-32 max-w-xs overflow-y-auto text-center">				
@@ -1404,16 +1441,22 @@ bind:clientWidth={canvasDiv}
 					{/if}
 				</div>
 				<div class="flex flex-col items-center">
-					<h2 class="text-xl font-bold text-center my-5">Play-Name</h2>
-					<input type="text" class="border-2 border-black rounded-md" bind:value={playName} />
-				</div>
-				<div class="flex flex-col items-center">
-					<h2 class="text-xl font-bold text-center my-5">Formation Name</h2>
-					<input type="text" class="border-2 border-black rounded-md" bind:value={formationName} />
+					<h2 class="text-xl font-bold text-center my-5">Auto Align D-Front</h2>
+					<input type="text" placeholder="Choose Front" class="input input-bordered input-secondary w-full max-w-s" bind:value={chosenFront}
+					on:click={userTyping}
+					>
+					{#if chosenFront != null && chosenFront != ""}
+					<ul class="p-2 bg-gray-200 rounded-b w-full max-h-32 max-w-xs overflow-y-auto text-center">				
+						{#each data.props.plays as front}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<li><a class = "text-black font-bold hover:text-gray-600 text-center hover:cursor-pointer"  on:click={() => console.log("hello")}>{front}</a></li>
+						{/each}
+					</ul>
+					{/if}
 				</div>
 				
-				<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={() => storeFormation(players, formationName, data.props.user.uid, db)}>Add Formation</button>
-				<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={() => storePlay(db, data.props.user.uid, playName, players)}>Add Play</button>
+				
+				
 				<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-5" on:click={() => debugDefense()}>Auto Align 42 Over G</button>
 
 			</div>
@@ -1422,7 +1465,7 @@ bind:clientWidth={canvasDiv}
 		  {/if}
 		  </div>
 	
-	<div class = "relative grid justify-center w-full">	
+	<div class = "relative grid justify-center w-full z-0 overflow-x-auto">	
 	<canvas
 		bind:this={canvas}
 		on:mousemove={handleMousemove}
@@ -1436,14 +1479,15 @@ bind:clientWidth={canvasDiv}
 		id="canvas"
 	/>
     <!-- a control center that is aligned horizontally below the canvas, below it -->
-	<div class="card w-full bg-base-300 text-neutral-content mb-4 h-36">
+	<div class="card w-full bg-base-300 text-neutral-content mb-4 h-36 overflow-x-auto">
 		<div class="card-body items-center text-center">
 		  <div class="flex flex-row">
 			<div class="flex flex-row items-center gap-12">
-				<btn class = "btn btn-error text-white" on:click={() => clearPlay()}>Clear</btn>
-				<label for="my-modal-4" class="btn btn-primary">Save Formation</label>
-				<label for="my-modal-5" class="btn btn-primary">Save Play</label>
-				<btn class = "btn btn- text-white">Add to a install or group?</btn>
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<btn class = "btn bg-red-500 text-white" on:click={() => clearPlay()}>Clear</btn>
+				<label for="my-modal-4" class="btn bg-indigo-700">Save Formation</label>
+				<label for="my-modal-5" class="btn bg-indigo-700">Save Play</label>
+				<btn class = "btn bg-green-600 text-white">Add to a install or group?</btn>
 
 			</div>
 		</div>
@@ -1462,11 +1506,12 @@ bind:clientWidth={canvasDiv}
   <label class="modal-box relative" for="">
 	<div class="flex flex-col items-center">
 		<h2 class="text-2xl font-bold text-center my-2">Formation Name</h2>
-		<input type="text" class="input input-primary" bind:value={formationName} />
+		<input type="text" class="input input-primary" bind:value={formationName}
+		on:click={userTyping} />
 	</div>
 	<div class="modal-action">
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<label for="my-modal-4" class="btn btn-success text-white" on:click={() => storeFormation(players, formationName, data.props.user.uid, db)}>Submit</label>
+		<label for="my-modal-4" class="btn btn-indigo-700 text-white" on:click={() => storeFormation(players, formationName, data.props.user.uid, db)}>Submit</label>
 	  </div>
    </label>
 </label>
@@ -1475,16 +1520,18 @@ bind:clientWidth={canvasDiv}
   <label class="modal-box relative" for="">
 	<div class="flex flex-col items-center">
 		<h2 class="text-2xl font-bold text-center my-2">Play Name</h2>
-		<input type="text" class="input input-primary" bind:value={playName} />
+		<input type="text" class="input input-primary" bind:value={playName}
+		on:click={userTyping} />
 		{#if playName != null && playName != ""}
 		<h2 class="text-xl font-semibold text-center my-2">Save Formation at the same time?</h2>
-		<input type="text" class="input input-primary" placeholder= "Optional - Formation Name" bind:value={formationName} />
+		<input type="text" class="input input-primary" placeholder= "Optional - Formation Name" bind:value={formationName}
+		on:click={userTyping} />
 		<h2 class = "text-m text-center">note: if formation already exists the existing formation will be overwritten</h2>
 		{/if}
 	</div>
 	<div class="modal-action">
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<label for="my-modal-5" class="btn btn-success text-white" on:click={() => storePlay(db, data.props.user.uid, playName, players)}
+		<label for="my-modal-5" class="btn btn-indigo-700 text-white" on:click={() => storePlay(db, data.props.user.uid, playName, players)}
 			on:click={() => storeFormation(players, formationName, data.props.user.uid, db)}
 			>Submit</label>
 	  </div>

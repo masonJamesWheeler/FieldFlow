@@ -26,7 +26,10 @@
   <NavBar/>
   {#if !userLoaded}
     <div class="flex justify-center items-center h-screen">
-      <div class="text-2xl">Loading...</div>
+      <div class="text-2xl font-extrabold">Loading...</div>
+    <div class="items-center justify-center rounded-full w-14 h-14 bg-gradient-to-tr from-indigo-500 to-pink-500 animate-spin flex">
+      <div class="h-9 w-9 rounded-full bg-slate-800"></div>
+    </div>
     </div>
   {:else}
     <slot />

@@ -1225,7 +1225,6 @@ import { onMount } from 'svelte';
 		// draw the players
 		drawPlayers();
 	}
-  
 
 </script>
 <!-- a single page website style slidable website -->
@@ -1239,7 +1238,11 @@ import { onMount } from 'svelte';
 			<path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
 		</svg>
 	</div>
-	
+	<div class="custom-shape-divider-top-1672880659">
+		<svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+			<path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+		</svg>
+	</div>
 <div class = "h-full w-screen bg-gradient-to-r from-slate-800 to-slate-700">
 
 <section class="pt-20 pb-10 lg:pt-[120px] lg:pb-20">
@@ -1261,7 +1264,7 @@ import { onMount } from 'svelte';
           <h2
             class="text-transparent mb-4 text-6xl font-extrabold tracking-tight overflow-visible bg-clip-text bg-gradient-to-r from-violet-600 to-red-500 "
           >
-            PlayBook-Tech
+            Field Flow
           </h2>
           <p class="text-body font-bold tracking-wide text-lg text-white underline underline-offset-2">
             Our mission is to revolutionize the way coaches engineer, share, and store plays by providing a user-friendly and intuitive platform that enables coaches to quickly and easily create and organize their plays
@@ -1378,6 +1381,24 @@ import { onMount } from 'svelte';
 .custom-shape-divider-top-1672787896 .shape-fill {
     fill: rgb(67 56 202);
 }
+.custom-shape-divider-top-1672880659 {
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
 
+.custom-shape-divider-top-1672880659 svg {
+    position: absolute;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 96px;
+    transform: rotateY(180deg);
+}
+
+.custom-shape-divider-top-1672880659 .shape-fill {
+    fill: rgb(237, 58, 118)
+}
 
 </style>

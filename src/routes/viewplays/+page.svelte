@@ -1,5 +1,116 @@
+<script lang="ts">
+	import type { PageData } from '$lib/types';
+	import PlayCard from '../../components/playCard.svelte';
+	import { onMount } from 'svelte';
+	export let data: PageData;
 
-
-
-
-
+	onMount(async () => {
+		console.log(data);
+	});
+</script>
+<!-- svelte-ignore a11y-missing-attribute -->
+<html data-theme = "emerald">
+<div class = "h-full w-screen bg-gradient-to-r from-slate-800 to-slate-700">
+    <section class="pt-20 pb-10 lg:pt-[120px] lg:pb-20">
+      <div class="container mx-auto justify-center place-items-center">
+        <h2 class = "text-white text-4xl font-extrabold tracking-tight self-center">Most Recent Installs</h2>
+        <div class="mx-4 flex bg-indigo-700 border-8 border-white rounded-3xl gap-x-2 shadow-2xl overflow-x-auto">
+        <!-- div's that show folder icon's representing installs -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-24 h-24 my-10 mx-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-24 h-24 my-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+              </svg>
+        </div>
+        </div>
+        <div class = "">
+        <div class="grid grid-rows-1 xl:grid-cols-3 grid-flow-row lg:grid-flow-col gap-4 mb-6 rounded-xl z-50">
+          <div class = "col-span-1 mx-4 ">
+          <div class="card shadow-2xl bg-indigo-700 mb-4 mx-auto mt-4 border-8 border-white w-96 md:w-full">
+            <div class="card-body">
+              <h2 class="card-title text-white underline underline-offset-2">Welcome to the future! </h2>
+              <p class="card-text text-white bullet text-lg">Gone are the days of cluttered notebooks and lost diagrams. Our user-friendly interface allows coaches to easily create and organize their plays, making it easy to access and review them at any time. Whether you're a seasoned veteran or just starting out, our app is designed to streamline your play design process and help you focus on what matters most - improving your team's performance. </p>
+            </div>
+          </div>
+          <div class="card bg-indigo-700 shadow-2xl mx-auto mb-4 border-8 border-white lg:col-start-1 md:w-full w-96 row-start-2">
+            <div class="card-body">
+              <h2 class="card-title text-white underline underline-offset-2">Features:</h2>
+              <ul class="list-disc text-white">
+                <li class = "mb-4 font-semibold text-lg">Auto-Generate Defensive Formations and Fronts</li>
+                <li class = "font-semibold text-lg">Send Installs Instantly and Instantly</li>
+                <li class = "my-4 font-semibold text-lg">Let All Coaches have Access to Editing and Creating Plays</li>
+                <li class = "mt-4 font-semibold text-lg">Search for free plays or buy a playbook</li>
+              </ul>
+            </div>
+          </div>
+          </div>
+          <div class = "mx-auto xl:col-span-2 mt-0 hidden xl:block ">
+          
+        <div class="alert shadow-lg mt-4 justify-center col-span-2">
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>ADD INSTRUCTIONS LATER</span>
+            </div>
+        </div>
+        
+    </div>
+          </div>
+    
+    </div>
+        </section>
+        
+    <div class="bg-gray-100">
+      <div class="relative overflow-hidden">
+        <div class="absolute inset-0">
+          <div class="absolute inset-y-0 left-0 w-1/2 bg-gray-50"></div>
+        </div>
+        <div class="relative mx-auto">
+          <div class="bg-indigo-700 py-16 px-4 ">
+            <div class="max-w-lg mx-auto">
+              <h2 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+                <span class="block">Ready to dive in?</span>
+                <span class="block">Start your free trial today.</span>
+              </h2>
+              <p class="mt-3 text-lg leading-6 text-indigo-200">
+                Ac euismod vel sit maecenas id pellentesque eu sed consectetur. Malesuada adipiscing sagittis vel nulla nec.
+              </p>
+              <form class="mt-8 sm:flex">
+                <div class="min-w-0 flex-1">
+                  <label for="email" class="sr-only">Email address</label>
+                  <input id="email" type="email" required class="w-full px-5 py-3 border border-transparent rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700 focus:ring-white" placeholder="Enter your email">
+                </div>
+                <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
+                  <button type="submit" class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700 focus:ring-white">
+                    Get started
+                  </button>
+                </div>
+              </form>
+              <p class="mt-3 text-sm text-indigo-200">
+                Start your free trial, no credit card necessary.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <!-- create a play editing canvas environment as a demo for the homepage -->
+    
+    </div>
+    <!--  a background div made of a modern design with a few lines separating different colors -->
+    
+    </html>
+<div class="flex">
+	<div class=" w-full overflow-y-auto h-screen">
+		<div class="mx-auto max-w-5xl py-4 px-4 lg:max-w-7xl">
+			<div
+				class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-6 xl:gap-x-8 overflow-y-auto bg-gradient-to-r from-slate-200 to-slate-100 "
+			>
+				{#each data.props.plays as play}
+					<PlayCard data={play} />
+				{/each}
+			</div>
+		</div>
+	</div>
+</div>

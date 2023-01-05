@@ -458,150 +458,175 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 // function to draw the players on the canvas by traversing the adjacnecy matrix and drawing the path
 	// between each node and it's adjacent nodes
 	export function drawPlayers(players:Player[], ctx:CanvasRenderingContext2D, canvas:HTMLCanvasElement, img:HTMLImageElement, current_player:Player, currentNode:Node, drawing:boolean, editing:boolean, m2, editNode:Node, typing:boolean, magnetX:boolean, magnetY:boolean, magnetCoord, editingPlayer:Player ) {
-		// draw the players
-		for (let i = 0; i < players.length; i++) {
-			let currPlayer = players[i];
-			// draw a oval at the player's position
-			if (currPlayer.adjmatrix.firstAdded != null) {
-				currPlayer.x = currPlayer.adjmatrix.firstAdded.data.x;
-				currPlayer.y = currPlayer.adjmatrix.firstAdded.data.y;
-			}
-			drawOval(currPlayer.x, currPlayer.y, currPlayer.color, currPlayer, ctx, players);
-			// traverse the adjacency matrix
-			currPlayer.adjmatrix.nodes.forEach((node) => {
-
-				// draw the path between each node and it's adjacent nodes
-				node.adjNodes.forEach((adjNode) => {
-					// if the node is a bezier node, draw a bezier curve
-					if (adjNode.data.cp && adjNode.data.cpx != null && adjNode.data.cpy != null) {
-						if (currPlayer.adjmatrix.firstAdded == node) {
+			// draw the players
+			for (let i = 0; i < players.length; i++) {
+				let currPlayer = players[i];
+				// draw a oval at the player's position
+				if (currPlayer.adjmatrix.firstAdded != null) {
+					currPlayer.x = currPlayer.adjmatrix.firstAdded.data.x;
+					currPlayer.y = currPlayer.adjmatrix.firstAdded.data.y;
+				}
+				// traverse the adjacency matrix
+				currPlayer.adjmatrix.nodes.forEach((node) => {
+	
+					// draw the path between each node and it's adjacent nodes
+					node.adjNodes.forEach((adjNode) => {
+						// if the node is a bezier node, draw a bezier curve
+						if (adjNode.data.cp && adjNode.data.cpx != null && adjNode.data.cpy != null) {
+							if (currPlayer.adjmatrix.firstAdded == node) {
+								// if the control point is within 80 vertical pixels of the player draw the start of the line from the side
+								// of the player instead of the top
+								if (adjNode.data.cpy - currPlayer.y < 80) {
+									// if we are to the left of the node draw the line from the left side of the player
+									if (adjNode.data.cpx - currPlayer.x < 0) {
+										drawBezier(
+											node.data.x,
+											node.data.y,
+											adjNode.data.x,
+											adjNode.data.y,
+											adjNode.data.cpx,
+											adjNode.data.cpy,
+											currPlayer.color,
+											ctx
+										);
+									} else {
+										// if we are to the right of the node draw the line from the right side of the player
+										drawBezier(
+											node.data.x,
+											node.data.y,
+											adjNode.data.x,
+											adjNode.data.y,
+											adjNode.data.cpx,
+											adjNode.data.cpy,
+											currPlayer.color,
+											ctx
+										);
+									}
+								} else 
+								drawBezier(
+									node.data.x,
+									node.data.y-45,
+									adjNode.data.x,
+									adjNode.data.y,
+									adjNode.data.cpx,
+									adjNode.data.cpy,
+									currPlayer.color,
+									ctx
+								);
+							} else {
 							drawBezier(
 								node.data.x,
-								node.data.y-45,
+								node.data.y,
 								adjNode.data.x,
 								adjNode.data.y,
 								adjNode.data.cpx,
 								adjNode.data.cpy,
 								currPlayer.color,
-                                ctx,
+								ctx
 							);
-						} else {
-						drawBezier(
-							node.data.x,
-							node.data.y,
-							adjNode.data.x,
-							adjNode.data.y,
-							adjNode.data.cpx,
-							adjNode.data.cpy,
-							currPlayer.color,
-                            ctx,
-						);
-						}
-					} else if (!adjNode.data.cp) {
-						if (currPlayer.adjmatrix.firstAdded == node) {
-							if (adjNode.data.y > node.data.y -80) {
-								// if the adj node is to the right of the node
-								if (adjNode.data.x > node.data.x) {
-									// draw a bezier curve from the node to the adj node
-									drawLine(
-								node.data.x+45,
-								node.data.y,
-								adjNode.data.x,
-								adjNode.data.y,
-								currPlayer.color,
-								adjNode.data.dashed,
-                                ctx,
-							);
+							}
+						} else if (!adjNode.data.cp) {
+							if (currPlayer.adjmatrix.firstAdded == node) {
+								if (adjNode.data.y > node.data.y -80) {
+									// if the adj node is to the right of the node
+									if (adjNode.data.x > node.data.x) {
+										// draw a bezier curve from the node to the adj node
+										drawLine(
+									node.data.x+45,
+									node.data.y,
+									adjNode.data.x,
+									adjNode.data.y,
+									currPlayer.color,
+									adjNode.data.dashed, ctx
+								);
+									} else {
+										// draw a bezier curve from the node to the adj node
+										drawLine(
+									node.data.x-45,
+									node.data.y,
+									adjNode.data.x,
+									adjNode.data.y,
+									currPlayer.color,
+									adjNode.data.dashed, ctx
+								);
+									}
 								} else {
-									// draw a bezier curve from the node to the adj node
-									drawLine(
-								node.data.x-45,
-								node.data.y,
-								adjNode.data.x,
-								adjNode.data.y,
-								currPlayer.color,
-								adjNode.data.dashed,
-                                ctx,
-							);
-								}
-							} else {
+								drawLine(
+									node.data.x,
+									node.data.y-45,
+									adjNode.data.x,
+									adjNode.data.y,
+									currPlayer.color,
+									adjNode.data.dashed, ctx
+								);
+							} 
+						}else {
 							drawLine(
 								node.data.x,
-								node.data.y-45,
-								adjNode.data.x,
-								adjNode.data.y,
-								currPlayer.color,
-								adjNode.data.dashed,
-                                ctx,
-							);
-						} 
-					}else {
-						drawLine(
-							node.data.x,
-							node.data.y,
-							adjNode.data.x,
-							adjNode.data.y,
-							currPlayer.color,
-							adjNode.data.dashed,
-                            ctx,
-						);
-					}
-				}
-					// if the player is the current player, draw the nodes and control points
-					if (currPlayer == current_player || editingPlayer == currPlayer) {
-						// and it isn't the first node
-						drawNodes(currPlayer, ctx);
-						drawNode(currPlayer.x, currPlayer.y, currPlayer.color, ctx);
-					}
-					if (adjNode.data.arrow) {
-						if (adjNode.data.cp) {
-							drawArrowhead(
-								adjNode.data.cpx,
-								adjNode.data.cpy,
-								adjNode.data.x,
-								adjNode.data.y,
-								currPlayer.color,
-                                ctx,
-							);
-						} else {
-							drawArrowhead(
-								node.data.x,
 								node.data.y,
 								adjNode.data.x,
 								adjNode.data.y,
 								currPlayer.color,
-                                ctx,
-							);
-						}
-					} else if (adjNode.data.blocking) {
-						if (adjNode.data.cp) {
-							drawBlocking(
-								adjNode.data.cpx,
-								adjNode.data.cpy,
-								adjNode.data.x,
-								adjNode.data.y,
-								currPlayer.color,
-                                ctx,
-							);
-						} else {
-							drawBlocking(
-								node.data.x,
-								node.data.y,
-								adjNode.data.x,
-								adjNode.data.y,
-								currPlayer.color,
-                                ctx,
+								adjNode.data.dashed, ctx
 							);
 						}
 					}
+						// if the player is the current player, draw the nodes and control points
+						if (editingPlayer == currPlayer) {
+							// and it isn't the first node
+							drawNodes(currPlayer, ctx);
+							drawNode(currPlayer.x, currPlayer.y, currPlayer.color, ctx);
+						}
+						if (adjNode.data.arrow) {
+							if (adjNode.data.cp) {
+								drawArrowhead(
+									adjNode.data.cpx,
+									adjNode.data.cpy,
+									adjNode.data.x,
+									adjNode.data.y,
+									currPlayer.color,
+									ctx
+								);
+							} else {
+								drawArrowhead(
+									node.data.x,
+									node.data.y,
+									adjNode.data.x,
+									adjNode.data.y,
+									currPlayer.color, ctx
+								);
+							}
+						} else if (adjNode.data.blocking) {
+							if (adjNode.data.cp) {
+								drawBlocking(
+									adjNode.data.cpx,
+									adjNode.data.cpy,
+									adjNode.data.x,
+									adjNode.data.y,
+									currPlayer.color, ctx
+								);
+							} else {
+								drawBlocking(
+									node.data.x,
+									node.data.y,
+									adjNode.data.x,
+									adjNode.data.y,
+									currPlayer.color, ctx
+								);
+							}
+						}
+					});
 				});
+				if (currPlayer.progression != null) {
+					drawProgression(currPlayer, ctx);
+				}
+			}
+			// iterate through the players and add the ovals last
+			players.forEach((currPlayer) => {
+					drawOval(currPlayer.x, currPlayer.y, currPlayer.color, currPlayer, ctx, players);
 			});
+			
 		}
-        // to draw a player's position if they're being edited
-        if (editingPlayer != null) {
-        //showposition();
-        }
-	}
 
     // a function to draw the formation of a given Formation object
     export async function drawFormation(formation:string, ctx:CanvasRenderingContext2D, canvas:HTMLCanvasElement, img:HTMLImageElement, auth:string) {
@@ -610,6 +635,23 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 		// once players is no longer a promise then return the players
 		return players;
     }
+
+	// function to draw the progression of a player
+	function drawProgression(player:Player, ctx:CanvasRenderingContext2D) {
+		// we will draw the text of whatever the player's progression value is
+		// we will place this 50 pixels vertically over the last node
+		// set the font
+		ctx.font = "75px Helvetica";
+		// set the color
+		ctx.fillStyle = "red";
+		// draw the text
+		// case where the player ends in a bezier curve
+		if (player.adjmatrix.secondLastAdded.data.cp) {
+			ctx.fillText(player.progression, player.adjmatrix.secondLastAdded.data.x - 80, player.adjmatrix.secondLastAdded.data.y - 70);
+		} else {
+		ctx.fillText(player.progression, player.adjmatrix.lastAdded.data.x - 80, player.adjmatrix.lastAdded.data.y - 70);
+		}
+	}
 
     // a function to make a formation from the given Player objects in the players array
     export function makeFormation(players:Player[], name:string) {
