@@ -466,6 +466,9 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 					currPlayer.x = currPlayer.adjmatrix.firstAdded.data.x;
 					currPlayer.y = currPlayer.adjmatrix.firstAdded.data.y;
 				}
+				if (currPlayer == editingPlayer) {
+					currPlayer.color = 'gray';
+				}
 				// traverse the adjacency matrix
 				currPlayer.adjmatrix.nodes.forEach((node) => {
 	
@@ -486,8 +489,7 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 											adjNode.data.y,
 											adjNode.data.cpx,
 											adjNode.data.cpy,
-											currPlayer.color,
-											ctx
+											currPlayer.color, ctx
 										);
 									} else {
 										// if we are to the right of the node draw the line from the right side of the player
@@ -498,8 +500,7 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 											adjNode.data.y,
 											adjNode.data.cpx,
 											adjNode.data.cpy,
-											currPlayer.color,
-											ctx
+											currPlayer.color, ctx
 										);
 									}
 								} else 
@@ -510,8 +511,7 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 									adjNode.data.y,
 									adjNode.data.cpx,
 									adjNode.data.cpy,
-									currPlayer.color,
-									ctx
+									currPlayer.color, ctx
 								);
 							} else {
 							drawBezier(
@@ -521,8 +521,7 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 								adjNode.data.y,
 								adjNode.data.cpx,
 								adjNode.data.cpy,
-								currPlayer.color,
-								ctx
+								currPlayer.color, ctx
 							);
 							}
 						} else if (!adjNode.data.cp) {
@@ -567,7 +566,7 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 								adjNode.data.x,
 								adjNode.data.y,
 								currPlayer.color,
-								adjNode.data.dashed, ctx
+								adjNode.data.dashed,ctx
 							);
 						}
 					}
@@ -593,7 +592,8 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 									node.data.y,
 									adjNode.data.x,
 									adjNode.data.y,
-									currPlayer.color, ctx
+									currPlayer.color,
+									 ctx
 								);
 							}
 						} else if (adjNode.data.blocking) {
@@ -603,7 +603,8 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 									adjNode.data.cpy,
 									adjNode.data.x,
 									adjNode.data.y,
-									currPlayer.color, ctx
+									currPlayer.color,
+									ctx
 								);
 							} else {
 								drawBlocking(
@@ -611,7 +612,8 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 									node.data.y,
 									adjNode.data.x,
 									adjNode.data.y,
-									currPlayer.color, ctx
+									currPlayer.color,
+									ctx
 								);
 							}
 						}
@@ -623,10 +625,11 @@ export function escape(players:Player[], editingPlayer:Player, ctx:CanvasRenderi
 			}
 			// iterate through the players and add the ovals last
 			players.forEach((currPlayer) => {
-					drawOval(currPlayer.x, currPlayer.y, currPlayer.color, currPlayer, ctx, players);
+					drawOval(currPlayer.x, currPlayer.y, currPlayer.color, currPlayer,ctx, players);
 			});
 			
 		}
+	
 
     // a function to draw the formation of a given Formation object
     export async function drawFormation(formation:string, ctx:CanvasRenderingContext2D, canvas:HTMLCanvasElement, img:HTMLImageElement, auth:string) {
@@ -842,3 +845,6 @@ function inCircle(x1: number, y1: number, x2: number, y2: number) {
 		return false;
 	}
 }
+
+// a function that takes in a players array and then draws them on a canvas
+// purpose is to create an Html element so that we can convert it to a power 

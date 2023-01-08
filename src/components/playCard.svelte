@@ -1,11 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { drawPlayers } from '../utils/drawing';
+	import {clickedPlay} from "../lib/stores";
+	import {goto} from '$app/navigation';
 	import type { Player } from '../utils/objects';
-	export let data: Player[];
+	export let data;
+	console.log(data)
+	//subscribe to the clickedPlay store
+	
+
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
 	let img;
+
+
 	onMount(async () => {
 		console.log(data);
 		// image of the field
@@ -15,7 +23,7 @@
 		// draw the image of the field
 		ctx.drawImage(img, 0, 0, 2600, 2600);
 		drawPlayers(
-			data,
+			data.players,
 			ctx,
 			canvas,
 			img,
@@ -32,11 +40,21 @@
 			null
 		);
 	});
+	// function to go to the viewplay page
+	function goToPlay(play) {
+		// update the status of clickedPlay
+		clickedPlay.set(play)
+		//goto the viewplay page
+		goto('/viewplay')		
+		console.log(goto('/viewplay'))
+	}
 </script>
 
 <!--  for each player array on the data -->
 <!-- draw the players on the canvas with the drawPlayers function -->
-<div class="h-full aspect-h-1 w-full  hover:opacity-95  hover:cursor-pointer shadow-xl flex">
+<!-- svelte-ignore missing-declaration -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="h-full aspect-h-1 w-full  hover:opacity-95  hover:cursor-pointer shadow-xl flex" on:click|preventDefault={() => goToPlay(data)}>
 	<div class="card rounded-b-2xl w-full">
 		<figure>
 			<canvas
@@ -50,12 +68,12 @@
 		</figure>
 		<div class="card-body bg-slate-700 rounded-b-2xl">
 			<h2 class="card-title text-white">
-				"test"
+				{data.name}
 			</h2>
 
 			<div class="card-actions justify-end">
-				<div class="badge badge-primary">"test"</div>
-				<div class="badge bg-orange-500 text-white border-none">"test"</div>
+				<div class="badge bg-violet-600 text-white">{data.down_dist}</div>
+				<div class="badge bg-red-500 text-white border-none">{data.personnel}</div>
 			</div>
 		</div>
 	</div>

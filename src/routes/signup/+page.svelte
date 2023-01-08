@@ -42,33 +42,33 @@ async function attemptCreateUser(email, password) {
 
  <!-- a firebase styled login page -->
     <!-- user's can log in with an email and password, or a gmail account-->
-    <div class = "w-full h-screen">
+    <div class = "w-full h-screen bg-slate-700">
         <!-- a hero div containing a form for the user to login -->
         <div class="min-h-screen flex flex-row  justify-center mx-0">
             
             <div class="flex justify-center self-center z-10 w-fit">
-              <div class="p-12  mx-auto rounded-2xl bg-base-300 ">
+              <div class="p-12  mx-auto rounded-2xl bg-indigo-700  ">
                   <div class="mb-4">
-                    <h3 class="font-semibold text-2xl text-gray-800">Sign Up </h3>
-                    <p class="text-gray-500">Please sign up for an account.</p>
+                    <h3 class="font-semibold text-2xl text-white">Sign Up </h3>
+                    <p class="text-white">Please sign up for an account.</p>
                   </div>
                   <div class="space-y-5">
                               <div class="space-y-2">
                                     <!-- svelte-ignore a11y-label-has-associated-control -->
-                                    <label class="text-sm font-medium text-gray-700 tracking-wide">Email</label>
-                    <input class=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-violet-400" type="" placeholder="mail@gmail.com" bind:value={email}>
+                                    <label class="text-sm font-medium text-white tracking-wide">Email</label>
+                    <input class=" w-full text-black px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-violet-400" type="" placeholder="mail@gmail.com" bind:value={email}>
                     </div>
                                 <div class="space-y-2">
                     <!-- svelte-ignore a11y-label-has-associated-control -->
-                    <label class="mb-5 text-sm font-medium text-gray-700 tracking-wide ">
+                    <label class="mb-5 text-sm font-medium text-white tracking-wide ">
                       Password
                     </label>
-                    <input class="w-full content-center text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-violet-400" type="password" placeholder="Enter your password" bind:value={password}>
+                    <input class="w-full content-center text-black px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-violet-400" type="password" placeholder="Enter your password" bind:value={password}>
                   </div>
                   {#if password.length > 0}
                   <div class="space-y-2">
                     <!-- svelte-ignore a11y-label-has-associated-control -->
-                    <label class="mb-5 text-sm font-medium text-gray-700 tracking-wide ">
+                    <label class="mb-5 text-sm font-medium text-white tracking-wide ">
                       One more time
                     </label>
                     <input class="w-full content-center text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-violet-400" type="password" placeholder="Enter your password again" bind:value={password2}>
@@ -76,19 +76,16 @@ async function attemptCreateUser(email, password) {
                   {/if}
                     <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <input id="remember_me" name="remember_me" type="checkbox" class="h-4 w-4 bg-blue-500 focus:ring-blue-400 border-gray-300 rounded">
-                      <label for="remember_me" class="ml-2 block text-sm text-gray-800">
-                        Remember me
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="text-white mx-2">Creating a team?</span> 
+                        <input type="checkbox" checked="checked" class="checkbox" />
                       </label>
                     </div>
-                    <div class="text-sm">
-                      <a href="#" class="text-blue-400 hover:text-blue-500">
-                        Forgot your password?
-                      </a>
                     </div>
                   </div>
                   <div>
-                    <button class="w-full flex justify-center btn btn-primary  shadow-lg cursor-pointer" on:click={() => attemptCreateUser(email, password)}>
+                    <button class="w-full flex justify-center btn bg-slate-800 text-white  shadow-lg cursor-pointer" on:click={() => attemptCreateUser(email, password)}>
                       Sign Up
                     </button>
                   </div>

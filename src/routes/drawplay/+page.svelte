@@ -5,7 +5,7 @@
 	import { Player, Node } from "../../utils/objects"
 	import type { Graph as GraphType } from './adjMatrix';
 	import type {PageData} from '$lib/types';
-	import { storeFormation, storePlay, getPlay, getFormation} from '../../utils/stores';
+	import { storeFormation, storePlay, getPlay, getFormation, search} from '../../utils/stores';
 	import {drawFormation, makeFormation} from '../../utils/drawing';
 	import { db } from '../../lib/firebase';
 	import {getDefensivePlayers, getOffensiveStrength, frontRules, DefensiveFormation} from '../../utils/defObjects'
@@ -32,6 +32,7 @@
 	let playName:string = "";
 	let chosenFront:string = "";
 	let chosenCoverage:string = "";
+	let searched = []
 	// intialize variables to hold the current player being edited
 	let current_player: Player = null;
 	let currentNode: Node = null;
@@ -86,7 +87,6 @@
 	let answer = '';
 
 	
-
 
 
 	// store the mouse position
@@ -181,8 +181,10 @@
 		document.addEventListener('keyup', (event) => {
    		delete keysPressed[event.key]
 	});
+	originalFormations = data.props.formations;
 	console.log(data.props.user)
 	console.log(data.props.plays)
+	console.log(data.props.formations)
 	
 });
 
@@ -470,8 +472,7 @@
 		} else if (!editing && !drawing) {
 			// check if we are clicking near a line segment
 			// iterate through the adjacency matrix nodes
-			checkLine(m.x, m.y);
-            selectPlayer(m.x, m.y)
+			checkClick(m.x, m.y);
 			console.log(editingPlayer);
 			if (editingPlayer != null) {
 				editing = true;
@@ -487,8 +488,7 @@
 			drawPlayers();
 		} else if (editing) {
 			// iterate through nodes
-			checkLine(m.x, m.y);
-			selectPlayer(m.x, m.y)
+			checkClick(m.x, m.y);
 			console.log(editingPlayer)
 			// if the user is clicking on a node and then let the user drag the node
 			// while the mouse is down
@@ -1184,6 +1184,112 @@
 		}
 	}
 
+	// function to check if we are clicking near a player's oval or his node
+	// if so, then we are now editing the player
+	function checkClick(x, y) {
+		let success = false;
+		// traverse the players array
+		for (let i = 0; i < players.length; i++) {
+			// check if we are clicking near the player's oval
+			if (
+				Math.sqrt(
+					Math.pow(players[i].x - x, 2) + Math.pow(players[i].y - y, 2)
+				) < 45
+			) {
+				success = true;
+				// if we are, then we are now editing the player
+				editingPlayer = players[i];
+				// set the color of the player to red
+				editingPlayer.color = "red";
+				editing = true;
+				// clear canvas
+				clearCanvas(ctx);
+				// redraw the players
+				drawPlayers();
+				// return
+				return;
+			}
+			// traverse the adjacency matrix
+			players[i].adjmatrix.nodes.forEach((node) => {
+				// check if we are clicking near the straight line connecting the node with it's adjacent nodes
+				// iterate through the nodes adjacency matrix
+				node.adjNodes.forEach((adjNode) => {
+					// if we are dealing with the first Node
+					if (players[i].adjmatrix.firstAdded == node) {
+					if (
+						Math.abs(
+							(adjNode.data.y - (node.data.y-45)) * x -
+								(adjNode.data.x - node.data.x) * y +
+								adjNode.data.x * (node.data.y -45) -
+								adjNode.data.y * node.data.x
+						) /
+							Math.sqrt(
+								Math.pow(adjNode.data.y - (node.data.y-45), 2) +
+									Math.pow(adjNode.data.x - node.data.x, 2)
+							) <
+						10
+					) {
+						success = true;
+						// if we are, then we are now editing the player
+						editingPlayer = players[i];
+						// set the color of the player to red
+						editingPlayer.color = "red";
+						editing = true;
+						// clear canvas
+						clearCanvas(ctx);
+						// redraw the players
+						drawPlayers();
+						// return
+						return;
+					}
+					} else 
+					// if the click is close to the line connecting the two node and adjNode
+					// the formula for the line in-between the two points is
+					// checking to see if our click is within 10 pixels of the line
+					if (
+						Math.abs(
+							(adjNode.data.y - node.data.y) * x -
+								(adjNode.data.x - node.data.x) * y +
+								adjNode.data.x * node.data.y -
+								adjNode.data.y * node.data.x
+						) /
+							Math.sqrt
+							(
+								Math.pow(adjNode.data.y - node.data.y, 2) +
+									Math.pow(adjNode.data.x - node.data.x, 2)
+							) <
+						10
+					) {
+						// if we are, then we are now editing the player
+						success = true;
+						editingPlayer = players[i];
+						// set the color of the player to red
+						editingPlayer.color = "red";
+						editing = true;
+						// clear canvas
+						clearCanvas(ctx);
+						// redraw the players
+						drawPlayers();
+						// return
+						return;
+					}
+			});
+		});
+		}
+		if (!success && editingPlayer != null) {
+			// if we are not clicking near a player's oval or node, then we are not editing a player
+			editing = false;
+			// set the color of the player to black
+			editingPlayer.color = "black";
+			editingPlayer = null;
+			// clear canvas
+			clearCanvas(ctx);
+			// redraw the players
+			drawPlayers();
+		}
+	}
+	
+
 	//function to delete a player
 	function deletePlayer() {
 		// remove the player from the players array
@@ -1251,7 +1357,7 @@
 	}
 
 	async function loadPlay(auth, name, db) {
-		players = await getPlay(auth, name, db);
+		players = await (await getPlay(auth, name, db)).players;
 		// clear the canvas
 		clearCanvas(ctx);
 		// draw the players
@@ -1309,6 +1415,12 @@
 			drawPlayers();
 		}
 	}
+
+	// function to change the list of the searched formations
+	function changeSearchedPlays(searchTerm, data) {
+        console.log(data)
+		searched = search(searchTerm, data)
+    }
     
 	
 </script>
@@ -1339,7 +1451,7 @@ bind:clientWidth={canvasDiv}
 				<div class="flex flex-col items-center">
 					<h1 class="text-3xl font-bold text-center my-5 text-transparent bg-gradient-to-r from-violet-700 to-blue-600 bg-clip-text">Controls</h1>
 					<div class="flex flex-col items-center">
-						<div class = "">
+						<div>
 						<kbd class="kbd">shift</kbd>
 						+
 						<kbd class="kbd">click</kbd>
@@ -1446,12 +1558,12 @@ bind:clientWidth={canvasDiv}
 				<h1 class="text-3xl font-bold text-center my-5">Search By</h1>
 				<div class="flex flex-col items-center">
 					<h2 class="text-xl font-bold text-center my-2">Formations</h2>					
-					<input type="text" placeholder="Formation" class="input input-bordered input-secondary w-full max-w-s" bind:value={formationInput}
+					<input type="text" placeholder="Formation" class="input input-bordered input-secondary w-full max-w-s" on:keydown={() =>changeSearchedPlays(formationInput, data.props.formations)} bind:value={formationInput}
 					on:click={userTyping}
 					>
 					{#if formationInput != null && formationInput != "" && data.props.formations != null}
 					<ul class="p-2 bg-gray-200 rounded-b w-full max-h-32 max-w-xs text-center">				
-						{#each data.props.formations as formation}
+						{#each searched as formation}
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<li><a class = "text-black font-bold hover:cursor-pointer hover:text-gray-600 text-center" on:click={() => loadFormation(formation, ctx, canvas, img, data.props.user.uid)}>{formation}</a></li>
 						{/each}
@@ -1461,12 +1573,12 @@ bind:clientWidth={canvasDiv}
 				</div>
 				<div class="flex flex-col items-center">
 					<h2 class="text-xl font-bold text-center my-5">Play Name</h2>
-					<input type="text" placeholder="Formation" class="input input-bordered input-secondary w-full max-w-s" bind:value={playInput}
+					<input type="text" placeholder="Formation" class="input input-bordered input-secondary w-full max-w-s" bind:value={playInput} on:keydown={() =>changeSearchedPlays(playInput, data.props.plays)}
 					on:click={userTyping}
 					>
 					{#if playInput != null && playInput != "" && data.props.plays != null}
 					<ul class="p-2 bg-gray-200 rounded-b w-full max-h-32 max-w-xs overflow-y-auto text-center">				
-						{#each data.props.plays as play}
+						{#each searched as play}
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<li><a class = "text-black font-bold hover:text-gray-600 text-center hover:cursor-pointer"  on:click={() => loadPlay(data.props.user.uid, play, db)}>{play}</a></li>
 						{/each}

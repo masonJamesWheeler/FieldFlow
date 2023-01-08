@@ -12,14 +12,7 @@ import { Graph } from './adjMatrix';
 // the formation class will contain the name of the formation, the personnel and the rules for the defense
 
 export let frontRules = {
-    fronts: { "42 Over G": {
-        "E": {tech:"7", frontside:true, depth:115},
-        "T": {tech:"3", frontside:true, depth:115},
-        "N": {tech:"2i", frontside:false, depth:115},
-        "$": {tech:"5", frontside:false, depth:115},
-        "W": {tech:"3", frontside:false, depth:430},
-        "M": {tech:"3", frontside:true, depth:430},
-    }, "42 Under G": {
+    "42 Over G": {
         "E": {tech:"7", frontside:true, depth:115},
         "T": {tech:"3", frontside:true, depth:115},
         "N": {tech:"2i", frontside:false, depth:115},
@@ -27,7 +20,6 @@ export let frontRules = {
         "W": {tech:"3", frontside:false, depth:430},
         "M": {tech:"3", frontside:true, depth:430},
     }
-}
 }
 // export the names of the front's so that we can use them in the front selection menu
 // return the value as a string array

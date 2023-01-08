@@ -144,7 +144,7 @@ import { onMount } from 'svelte';
 		document.addEventListener('keyup', (event) => {
    		delete keysPressed[event.key]
 	});
-  loadPlay("", "DISPLAY_PAGE_REFERENCE", db);
+      loadPlay("", "DISPLAY_PAGE_REFERENCE", db);
 });
 
 	// <---------      PLAYER FUNCTIONS     --------->
@@ -159,6 +159,10 @@ import { onMount } from 'svelte';
 			if (currPlayer.adjmatrix.firstAdded != null) {
 				currPlayer.x = currPlayer.adjmatrix.firstAdded.data.x;
 				currPlayer.y = currPlayer.adjmatrix.firstAdded.data.y;
+			}
+			ogColor = currPlayer.color;
+			if (currPlayer == editingPlayer) {
+				currPlayer.color = 'gray';
 			}
 			// traverse the adjacency matrix
 			currPlayer.adjmatrix.nodes.forEach((node) => {
@@ -262,7 +266,7 @@ import { onMount } from 'svelte';
 					}
 				}
 					// if the player is the current player, draw the nodes and control points
-					if (currPlayer == current_player || editingPlayer == currPlayer) {
+					if (editingPlayer == currPlayer) {
 						// and it isn't the first node
 						drawNodes(currPlayer);
 						drawNode(currPlayer.x, currPlayer.y, currPlayer.color);
@@ -309,13 +313,18 @@ import { onMount } from 'svelte';
 			if (currPlayer.progression != null) {
 				drawProgression(currPlayer);
 			}
+			if (currPlayer == editingPlayer) {
+				editingPlayer.color = ogColor
+				ogColor = "black"
+			}
 		}
         // iterate through the players and add the ovals last
 		players.forEach((currPlayer) => {
 				drawOval(currPlayer.x, currPlayer.y, currPlayer.color, currPlayer);
-			
 		});
+		
 	}
+
 
 	// function to add a player and start creating their path
 	function addPlayer() {
@@ -428,8 +437,6 @@ import { onMount } from 'svelte';
 			console.log(editingPlayer);
 			if (editingPlayer != null) {
 				editing = true;
-				ogColor = editingPlayer.color;
-				editingPlayer.color = 'gray';
 			} else if (!editing && !drawing && show) {
                 // if we are not clicking on a line segment, then we are adding a new player
                 addPlayer();
@@ -489,6 +496,7 @@ import { onMount } from 'svelte';
 					}
 				});
 			} else {
+				
 				if (!keysPressed['s']) {
 				escape();
 				}
@@ -501,7 +509,6 @@ import { onMount } from 'svelte';
 		// reset length
 		length = 0;
 	}
-
 	// function inCircle checks if our points are radially close to an origin
 	function inCircle(x1: number, y1: number, x2: number, y2: number) {
 		// calculate the distance between the two points
@@ -1177,6 +1184,111 @@ import { onMount } from 'svelte';
             ctx.fillText(editingPlayer.position, editingPlayer.x -75, editingPlayer.y +70);
         }
     }
+// function to check if we are clicking near a player's oval or his node
+	// if so, then we are now editing the player
+	function checkClick(x, y) {
+		let success = false;
+		// traverse the players array
+		for (let i = 0; i < players.length; i++) {
+			// check if we are clicking near the player's oval
+			if (
+				Math.sqrt(
+					Math.pow(players[i].x - x, 2) + Math.pow(players[i].y - y, 2)
+				) < 45
+			) {
+				success = true;
+				// if we are, then we are now editing the player
+				editingPlayer = players[i];
+				// set the color of the player to red
+				editingPlayer.color = "red";
+				editing = true;
+				// clear canvas
+				clearCanvas(ctx);
+				// redraw the players
+				drawPlayers();
+				// return
+				return;
+			}
+			// traverse the adjacency matrix
+			players[i].adjmatrix.nodes.forEach((node) => {
+				// check if we are clicking near the straight line connecting the node with it's adjacent nodes
+				// iterate through the nodes adjacency matrix
+				node.adjNodes.forEach((adjNode) => {
+					// if we are dealing with the first Node
+					if (players[i].adjmatrix.firstAdded == node) {
+					if (
+						Math.abs(
+							(adjNode.data.y - (node.data.y-45)) * x -
+								(adjNode.data.x - node.data.x) * y +
+								adjNode.data.x * (node.data.y -45) -
+								adjNode.data.y * node.data.x
+						) /
+							Math.sqrt(
+								Math.pow(adjNode.data.y - (node.data.y-45), 2) +
+									Math.pow(adjNode.data.x - node.data.x, 2)
+							) <
+						10
+					) {
+						success = true;
+						// if we are, then we are now editing the player
+						editingPlayer = players[i];
+						// set the color of the player to red
+						editingPlayer.color = "red";
+						editing = true;
+						// clear canvas
+						clearCanvas(ctx);
+						// redraw the players
+						drawPlayers();
+						// return
+						return;
+					}
+					} else 
+					// if the click is close to the line connecting the two node and adjNode
+					// the formula for the line in-between the two points is
+					// checking to see if our click is within 10 pixels of the line
+					if (
+						Math.abs(
+							(adjNode.data.y - node.data.y) * x -
+								(adjNode.data.x - node.data.x) * y +
+								adjNode.data.x * node.data.y -
+								adjNode.data.y * node.data.x
+						) /
+							Math.sqrt
+							(
+								Math.pow(adjNode.data.y - node.data.y, 2) +
+									Math.pow(adjNode.data.x - node.data.x, 2)
+							) <
+						10
+					) {
+						// if we are, then we are now editing the player
+						success = true;
+						editingPlayer = players[i];
+						// set the color of the player to red
+						editingPlayer.color = "red";
+						editing = true;
+						// clear canvas
+						clearCanvas(ctx);
+						// redraw the players
+						drawPlayers();
+						// return
+						return;
+					}
+			});
+		});
+		}
+		if (!success && editingPlayer != null) {
+			// if we are not clicking near a player's oval or node, then we are not editing a player
+			editing = false;
+			// set the color of the player to black
+			editingPlayer.color = "black";
+			editingPlayer = null;
+			// clear canvas
+			clearCanvas(ctx);
+			// redraw the players
+			drawPlayers();
+		}
+	}
+
     // if we click on a player's name then we want to be able to edit it
 	function changingName () {
 		typing = true
@@ -1219,7 +1331,7 @@ import { onMount } from 'svelte';
 	}
   // functions to initialize the player drawing embedded play into the home page
   async function loadPlay(auth, name, db) {
-		players = await getPlay(auth, "DISPLAY_PAGE_REFERENCE", db);
+		players = await (await getPlay(auth, "DISPLAY_PAGE_REFERENCE", db)).players;
 		// clear the canvas
 		clearCanvas(ctx);
 		// draw the players
@@ -1243,7 +1355,7 @@ import { onMount } from 'svelte';
 			<path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
 		</svg>
 	</div>
-<div class = "h-full w-screen bg-gradient-to-r from-slate-800 to-slate-700">
+<div class = "h-full w-screen bg-gradient-to-b from-slate-800 to-slate-700">
 
 <section class="pt-20 pb-10 lg:pt-[120px] lg:pb-20">
   <div class="container mx-auto justify-center">
@@ -1294,7 +1406,9 @@ import { onMount } from 'svelte';
       </div>
       </div>
 	  <div class = "mx-auto xl:col-span-2 mt-0 hidden xl:block ">
-      <canvas
+      <!-- MAKE SURE TO CREATE DIV AROUND THE CANVAS SO IT DOESN"T MESS WITH MOUSE COORDINATES -->
+	  <div class = "border-8 border-white mx-auto mt-0 lg:mt-4 shadow-3xl hidden md:block rounded-2xl">
+		<canvas
       bind:this={canvas}
       on:mousemove={handleMousemove}
       on:dblclick={handleDoubleClick}
@@ -1303,13 +1417,36 @@ import { onMount } from 'svelte';
       width="2600"
       height="2600"
       style="width:750px; height:615px;"
-      class="mx-auto mt-0 lg:mt-4 shadow-3xl rounded-xl border-8 border-white hidden md:block"
+      class="mx-auto"
       id="canvas"
     />
+	</div>
 	<div class="alert shadow-lg mt-4 justify-center col-span-2">
-		<div>
-		  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-		  <span>ADD INSTRUCTIONS LATER</span>
+		<div class = 'w-full grid grid-cols-2'>
+			<div class = "mx-auto">
+			<kbd class="kbd">shift</kbd>
+			+
+			<kbd class="kbd">click</kbd>
+			=
+			Add Player
+			 </div>
+			<div class = "mx-auto">							
+				<kbd class="kbd my-2">dbl-click</kbd>
+				=
+				Draw line with a arrow 
+			</div>
+			<div class = "mx-auto">						
+				<kbd class="kbd">a</kbd>
+				=
+				Make Dashed-Line 
+			</div>	
+			<div class = mx-auto>							
+				<kbd class="kbd">d</kbd>
+				+
+				<kbd class="kbd">click</kbd>
+				=
+				Start making a curve 
+			</div>		
 		</div>
 	</div>
 	
@@ -1398,7 +1535,7 @@ import { onMount } from 'svelte';
 }
 
 .custom-shape-divider-top-1672880659 .shape-fill {
-    fill: rgb(237, 58, 118)
+    fill: rgb(124 58 237)
 }
 
 </style>

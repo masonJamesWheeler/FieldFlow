@@ -116,4 +116,21 @@ import type { Graph as GraphType } from './adjMatrix';
 			
 		}
 	}
-    export { Player, Node, Formation}
+
+	// a class for a Install Object, the Install Object has the following properties
+	// Name, Plays, Formations, TimeStamp
+	class Install {
+		name: string;
+		plays: Array<any>;
+		formations: Array<any>;
+		timeStamp: string;
+		constructor(name: string, plays: Array<any>, formations: Array<any>, timeStamp: string) {
+			this.name = name;
+			this.plays = plays;
+			this.formations = formations;
+			this.timeStamp = timeStamp;
+		}
+	}
+
+
+    export { Player, Node, Formation, Install}
