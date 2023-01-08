@@ -1,1 +1,0 @@
-export const stripe = require('stripe')('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');

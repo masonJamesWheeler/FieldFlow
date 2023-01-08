@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageData } from '$lib/types';
+	import type { PageData } from './$types';
 	import PlayCard from '../../components/playCard.svelte';
 	import { search } from '../../utils/stores';
 	import { goto } from '$app/navigation';
