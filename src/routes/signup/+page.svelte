@@ -30,7 +30,7 @@ async function attemptCreateUser(email, password) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         console.log(user);
-        goto('/login');
+        goto('/selectPricing');
     } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -74,16 +74,6 @@ async function attemptCreateUser(email, password) {
                     <input class="w-full content-center text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-violet-400" type="password" placeholder="Enter your password again" bind:value={password2}>
                   </div>
                   {/if}
-                    <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                    <div class="form-control">
-                      <label class="label">
-                        <span class="text-white mx-2">Creating a team?</span> 
-                        <input type="checkbox" checked="checked" class="checkbox" />
-                      </label>
-                    </div>
-                    </div>
-                  </div>
                   <div>
                     <button class="w-full flex justify-center btn bg-slate-800 text-white  shadow-lg cursor-pointer" on:click={() => attemptCreateUser(email, password)}>
                       Sign Up
@@ -97,6 +87,7 @@ async function attemptCreateUser(email, password) {
     
     
     </div>
+    
     
         
     

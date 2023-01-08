@@ -40,6 +40,7 @@
 	"dependencies": {
 		"daisyui": "^2.46.0",
 		"firebase": "^9.15.0",
-		"pptxgenjs": "^3.11.0"
+		"pptxgenjs": "^3.11.0",
+		"stripe": "^11.6.0"
 	}
 }
