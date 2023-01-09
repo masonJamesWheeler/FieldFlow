@@ -20,15 +20,15 @@
   });
 
   async function createPaymentIntent() {
-    const response = await fetch('/examples/payment-element/payment-intent', {
+    const response = await fetch('/server.js', {
       method: 'POST',
       headers: {
-        'content-type': 'application/json'
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({})
+      body: JSON.stringify({
+        amount: 1000
+      })
     })
-    const { clientSecret } = await response.json()
-    return clientSecret
   }
 
   async function submit() {

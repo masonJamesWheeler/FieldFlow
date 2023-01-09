@@ -8,9 +8,10 @@ export async function Post() {
         currency: 'usd',
         payment_method_types: ['card'],
     });
-    return json({
-    
-        clientSecret: paymentIntent.client_secret
+    return ({
+        body: {
+            clientSecret: paymentIntent.client_secret
+        }
         
     });
 }
