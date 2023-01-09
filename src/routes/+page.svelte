@@ -1,6 +1,5 @@
 <script lang="ts">
 // intitialize a canvas
-
 import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { Graph } from './drawplay/adjMatrix';
@@ -1489,7 +1488,7 @@ import { onMount } from 'svelte';
       </div>
     </div>
   </div>
-  
+<a href = "/checkout">please god work</a>
 </div>
 <!-- create a play editing canvas environment as a demo for the homepage -->
 

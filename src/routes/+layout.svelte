@@ -3,7 +3,7 @@
 	import NavBar from '../components/NavBar.svelte';
 	import { auth } from '../lib/firebase';
 	import { onMount } from 'svelte';
-	import { onAuthStateChanged } from 'firebase/auth';
+	import { onAuthStateChanged } from 'firebase/auth'
 	export let user;
 
 	let userLoaded = false;
