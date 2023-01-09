@@ -20,7 +20,7 @@
   });
 
   async function createPaymentIntent() {
-    const response = await fetch('/server.js', {
+    const response = await fetch('/stripeAPI', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
