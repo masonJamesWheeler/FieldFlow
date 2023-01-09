@@ -42,6 +42,7 @@
 	"dependencies": {
 		"daisyui": "^2.46.0",
 		"firebase": "^9.15.0",
-		"lunr": "^2.3.9"
+		"lunr": "^2.3.9",
+		"pptxgenjs": "^3.11.0"
 	}
 }
