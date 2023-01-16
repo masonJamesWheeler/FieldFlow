@@ -1,10 +1,6 @@
-<script lang="ts">
-export let data;
-
-
-const stripe =  data.props.stripe;
-
-
+<script>
+  import { onMount } from 'svelte';
+  import {subscribe} from "./subscribe"
 </script>
-<h1>"hello world"</h1>
 
+<btn on:click={() => subscribe()}>hello world</btn>
