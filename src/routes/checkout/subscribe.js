@@ -25,7 +25,7 @@ onAuthStateChanged(auth, (user) => {
 });
 
 export async function subscribe() {
-  let user = await gitgetAuth()?.currentUser;
+  let user = await getAuth()?.currentUser;
   const docRef = await addDoc(collection(db, "Users", user.uid, "checkout_sessions"), {
     price : "price_1MOzHPH4tqBFeYceXMEdVPbu",
     success_url: window.location.origin,
