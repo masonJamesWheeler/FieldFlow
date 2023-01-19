@@ -5,6 +5,7 @@ import type { PageLoad } from './$types';
 import {getFormationNames, getPlayNames, getPlay} from "../../utils/stores"
 import { onAuthStateChanged } from "firebase/auth";
 import { onMount } from "svelte";
+import { goto } from "$app/navigation";
 
 // this is the page load function
 let user = getAuth()?.currentUser;
@@ -14,7 +15,6 @@ let userLoaded = false;
   onAuthStateChanged(auth, (user) => {
   if (user) {
     userLoaded = true;
-    // ...
   } else {
     // we are not logged in
   }

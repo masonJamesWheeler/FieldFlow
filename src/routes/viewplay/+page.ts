@@ -2,7 +2,6 @@
 import {auth, db } from "../../lib/firebase"
 import { getAuth } from "firebase/auth";
 import type { PageLoad } from './$types';
-import { goto } from '$app/navigation';
 import {getFormationNames, getPlayNames, getPlay, getInstallNames} from "../../utils/stores"
 import { onAuthStateChanged } from "firebase/auth";
 import {clickedPlay} from "../../lib/stores"
@@ -32,7 +31,7 @@ let userLoaded = false;
 
 export const load = (async ({ params }) => {
     // if we have a user then we want to pass the user to the page
-    if (userLoaded && user.uid != null) {
+    if (play != null) {
       console.log("HELLO")
         // change the window location
         return { props: { user, play        

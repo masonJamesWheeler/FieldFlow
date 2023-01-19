@@ -9,6 +9,7 @@
 
 	export let data: PageData;
 
+
 	let play = []
 	let install = []
 	//subscribe to the clickedPlay store
@@ -28,7 +29,6 @@
 	let selectedPersonnel = [];
 
 	onMount(async () => {
-		console.log(data);
 		let searchedPlays = [];
 		console.log(selectedDowns);
 	});

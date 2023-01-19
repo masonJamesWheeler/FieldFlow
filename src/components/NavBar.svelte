@@ -1,3 +1,32 @@
+<script lang="ts">
+import { goto } from '$app/navigation';
+import { redirect } from '@sveltejs/kit';
+import {auth} from '../lib/firebase'
+import { error } from '@sveltejs/kit';
+
+
+let user = auth?.currentUser
+// subscribe to the auth store
+// if the user is null, redirect to the login page
+// if the user is not null, redirect to the viewplays page
+
+// function to check if the user is null
+// if the user is null, redirect to the login page
+// if the user is not null, redirect to the viewplays page
+function gotoPlays() {
+    if (user == null) {      
+        goto('/login')
+    } else {
+        goto('/viewplays')
+        // throw error to the user
+
+        console.log(user)
+    }
+    
+}
+</script>
+
+
 <!-- navbar component -->
 <!-- a daisyui navbar component -->
 
@@ -25,7 +54,7 @@
           <ul class="p-2 bg-slate-600">
 
             <!-- svelte-ignore a11y-missing-attribute -->
-            <li><a class = "text-white tracking-tight font-bold hover:bg-slate-800"href="/viewplays">Plays</a></li>
+            <li><btn class = "text-white tracking-tight font-bold hover:bg-slate-800" on:click={() => gotoPlays()}>Plays</btn></li>
             <!-- svelte-ignore a11y-missing-attribute -->
             <li><a class = "text-white tracking-tight font-bold hover:bg-slate-800" >Installs</a></li>
           </ul>

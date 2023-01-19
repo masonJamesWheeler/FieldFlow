@@ -1581,7 +1581,7 @@
 			</div>
 		</div>
 				<div class="mx-auto w-full px-4 my-auto col-span-2 {filteredOpacity}">
-					<div class="carousel rounded-box border-8 border-white gap-x-4">
+					<div class="carousel rounded-box border-8 border-white gap-x-4 max-h-[450px]">
 						{#if selected.length == 0}
 							<p class="text-white font-extrabold text-center text-4xl mx-auto my-48">No Plays Selected</p>
 						{:else}						
@@ -1592,7 +1592,7 @@
 					</div>
 			</div>
 		</div>
-	<div class = "bg-gray-900 w-full pt-56">
+	<div class = "bg-gray-900 w-full pt-56 lg:pt-12">
       <div class=" bg-gradient-to-t from-[#4438ca] py-16 px-4 to-transparent">
         <div class="max-w-lg mx-auto">
           <h2 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">

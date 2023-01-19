@@ -14,9 +14,8 @@ let userLoaded = false;
   onAuthStateChanged(auth, (user) => {
   if (user) {
     userLoaded = true;
-    // ...
+    // timeout to allow the page to load
   } else {
-    // we are not logged in
   }
 });
 
@@ -36,5 +35,8 @@ export const load = (async ({ params }) => {
         }));
         return { props: { user, formations, playNames, plays, installNames
          } };
+    } else {
+        return { props: { user: null
+          } };
     }
 }) as PageLoad;
