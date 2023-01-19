@@ -1482,7 +1482,7 @@
 			</div>
 			<div class="mt-0">
 				<!-- a introduction for field flow -->
-				<div class="flex flex-col justify-center text-center">
+				<div class="flex flex-col justify-center text-center bg-slate-900">
 					<p class="text-white text-6xl font-extrabold mt-4 lg:mt-8">Where the world</p>
 					<p class="text-white text-6xl font-extrabold mt-4 lg:mt-8">builds plays.</p>
 					<p class="text-slate-300 text-xl font-extrabold mt-4 lg:mt-8">
@@ -1491,7 +1491,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex justify-center gap-x-8 mt-6">
+		<div class="flex justify-center gap-x-8 pt-6 bg-slate-900">
 			<a class="btn bg-[#ef4444] " href="/selectPricing">See Pricing</a>
 			<a class="btn bg-[#ef4444] " href="/drawplay">Go to Editor</a>
 		</div>
@@ -1592,15 +1592,13 @@
 					</div>
 			</div>
 		</div>
-	<div class = "bg-gray-900 w-full pt-56 lg:pt-12">
+	<div class = "bg-gray-900 w-full pt-96 lg:pt-24">
       <div class=" bg-gradient-to-t from-[#4438ca] py-16 px-4 to-transparent">
         <div class="max-w-lg mx-auto">
           <h2 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
             <span class="block">Start your free trial today.</span>
           </h2>
-          <p class="mt-3 text-lg leading-6 text-indigo-200">
-            Ac euismod vel sit maecenas id pellentesque eu sed consectetur. Malesuada adipiscing sagittis vel nulla nec.
-          </p>
+         
           <form class="mt-8 sm:flex">
             <div class="min-w-0 flex-1">
               <label for="email" class="sr-only">Email address</label>
