@@ -109,6 +109,11 @@
 
 	// implementing our own fading technique for the filtered plays
 	window.addEventListener('scroll', function () {
+		//  if the window is less than large than dont fade
+		if (window.innerWidth < 1024) {
+			filteredOpacity = 'opacity-100';
+			return;
+		} else {
 		let distanceScrolled = window.pageYOffset;
 		if (distanceScrolled > 1225 && distanceScrolled < 1700) {
 			filteredOpacity = 'opacity-100';
@@ -133,6 +138,7 @@
 		} else {
 			filteredOpacity = 'opacity-0';
 		}
+	}
 	});
 
 
@@ -1491,10 +1497,10 @@
 		</div>
 
 		<!-- MAKE SURE TO CREATE DIV AROUND THE CANVAS SO IT DOESN"T MESS WITH MOUSE COORDINATES -->
-		<div class="flex justify-center w-full bg-slate-900">
-			<div class={canvasOpacity}>
+		<div class="flex justify-center w-full bg-slate-900 ">
+			<div class= "{canvasOpacity}" >
 				<div
-					class="alert rounded-none rounded-t-xl shadow-lg justify-center col-span-2 mt-40 bg-slate-700"
+					class="alert rounded-none rounded-t-xl shadow-lg justify-center col-span-2 mt-40 bg-slate-700 hidden lg:block"
 				>
 					<p class="text-white font-extrabold text-center text-xl">Doubles Lt Smoky Return</p>
 				</div>
@@ -1507,11 +1513,11 @@
 					width="2600"
 					height="2600"
 					style="width:750px; height:615px;"
-					class="mx-auto"
+					class="mx-auto hidden lg:block"
 					id="canvas"
 				/>
 				<div
-					class="alert rounded-none rounded-b-xl shadow-lg justify-center col-span-2 mb-4 bg-slate-700 text-white"
+					class="alert rounded-none rounded-b-xl shadow-lg justify-center col-span-2 mb-4 bg-slate-700 text-white hidden lg:block"
 				>
 					<div class="w-full grid grid-cols-2">
 						<div class="mx-auto">
@@ -1540,8 +1546,8 @@
 		</div>
 		<!-- a element to display the ability to filter plays -->
 	
-		<div class="grid grid-cols-3 justify-center w-full bg-slate-900 h-4/5">
-			<div class = "flex flex-col m-0 p-3 bg-slate-900 items-center justify-start my-auto {filteredOpacity}">
+		<div class="grid lg:grid-cols-3 grid-cols-1 justify-center w-full bg-slate-900 h-4/5 py-20">
+			<div class = "flex flex-col p-3 bg-slate-900 items-center justify-start {filteredOpacity}">
 			<p class = "text-white font-extrabold text-4xl ml-12 mb-3">Filter through 1000's of plays
 				<span class = "text-rose-600">instantly.</span>
 			</p>
@@ -1586,7 +1592,7 @@
 					</div>
 			</div>
 		</div>
-	<div class = "bg-gray-900 w-full">
+	<div class = "bg-gray-900 w-full pt-56">
       <div class=" bg-gradient-to-t from-[#4438ca] py-16 px-4 to-transparent">
         <div class="max-w-lg mx-auto">
           <h2 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
