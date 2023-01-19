@@ -64,7 +64,7 @@
 </script>
 
 {#await data then data}
-	<div class="bg-gradient-to-r from-slate-200 to-slate-100 min-h-screen">
+	<div class="bg-gray-900 min-h-screen">
 		<div class="grid grid-col-1 w-full lg:grid-cols-2">
 			<div class=" my-auto mx-auto">
 				<div class="card bg-base-100 shad max-w-[500px] my-10 mb-10 rounded-3xl shadow-2xl">

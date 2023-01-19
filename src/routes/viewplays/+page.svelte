@@ -57,13 +57,13 @@
 
 <!-- svelte-ignore a11y-missing-attribute -->
 <html data-theme="emerald">
-	<div class="h-full w-screen bg-gradient-to-r from-slate-800 to-slate-700">
+	<div class="h-full w-screen bg-gray-900">
 		<section class="pt-10 pb-10 lg:pt-[60px] lg:pb-20 mx-6">
 			<div class=" container mx-auto justify-center place-items-center">
-				<h2 class="text-white text-4xl font-extrabold tracking-tight">Most Recent Installs</h2>
+				<h2 class="text-white text-4xl font-extrabold tracking">Most Recent Installs</h2>
 				<div class="flex flex-col m-auto p-auto">
 					<div
-						class="flex overflow-x-scroll pb-10 hide-scroll-bar bg-slate-900 border-8 border-white rounded-2xl"
+						class="flex overflow-x-scroll pb-10 hide-scroll-bar bg-slate-800 border-8 border-white rounded-2xl"
 					>
 						<div class="flex flex-nowrap md:ml-6 ml-4 ">
 							{#each data.props.installNames as install}

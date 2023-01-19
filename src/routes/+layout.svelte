@@ -28,7 +28,7 @@
 
 <NavBar />
 {#if !userLoaded && !timeout}
-	<div class="flex justify-center items-center h-screen">
+	<div class="flex justify-center items-center h-screen bg-slate-200">
 		<div class="text-2xl font-extrabold">Loading...</div>
 		<div
 			class="items-center justify-center rounded-full w-14 h-14 bg-gradient-to-tr from-indigo-500 to-pink-500 animate-spin flex"

@@ -7,7 +7,9 @@
 <div class = "flex ">
 <div class="navbar bg-slate-800 w-full">
     <div class="flex-1">
-      <a class="btn btn-ghost normal-case text-xl text-white" href="/">Field Flow</a>
+      <a class="btn btn-ghost normal-case text-xl text-white" href="/">
+      <img src = "FieldFlowAccent.png" class = "w-20 h-12"alt="FieldFlow"/>
+      </a>
     </div>
     <div class="flex-none">
       <ul class="menu menu-horizontal px-1">

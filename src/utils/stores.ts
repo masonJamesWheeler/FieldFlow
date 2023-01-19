@@ -494,7 +494,8 @@ export function makePlayFromData(play) {
         addNodesToPlayer(player11, player11.adjmatrix.lastAdded, playerEleven.position, playerEleven);
         players.push(player11);
         console.log(players)
-        return players;
+        play.players = players;
+        return play;
     }
 }
 // function to recursively add the nodes in order to the graph
@@ -527,11 +528,6 @@ function addNodesToPlayer(player: Player, node, playerName: string, play: Docume
     for (let i = 0; i < adjNodes.length; i++) {
         addNodesToPlayer(player, player.adjmatrix.lastAdded, playerName, play);
     }
-}
-//convert json node to a new Node object
-function convertAdjNodeToNode(adjNode) {
-    let node = new Node(adjNode.data.x, adjNode.data.y, adjNode.data.cpx, adjNode.data.cpy, adjNode.data.color, adjNode.data.dashed, adjNode.data.cp, adjNode.data.blocking, adjNode.data.arrow);
-    return node;
 }
 
 // a general searching function that takes in an array of objects and searches through every single field
@@ -636,6 +632,23 @@ export async function addNotesToPlay(play: string, user: string, db, qbNotes, rb
         
     }
 }
+
+// a function to load the filter plays from the database
+export async function loadFilterPlays(db) {
+    let filterPlayData = [];
+    const filterPlayRef = await collection(db, "FrontPage", "FilterPlays", "Plays");
+    const filterPlaySnapshot = await getDocs(filterPlayRef);
+    filterPlaySnapshot.forEach((doc) => {
+        filterPlayData.push(doc.data());
+    })
+    // for each piece of data convert the data to objects to return to the client
+    let filterPlays = [];
+    for (let i = 0; i < filterPlayData.length; i++) {
+        filterPlays.push(makePlayFromData(filterPlayData[i]));
+    }
+    return filterPlays;
+}
+
 
 
 
