@@ -1,6 +1,6 @@
 This is a repo for a project I work on in my spare time. It is a website written in svelte with
 over 20 pages and some fun implementations written for HTML Canvas. The end goal of the website is to 
-let Collegiate and High School football coaches quickly make plays and share them with their players.
+let collegiate and high-school football coaches quickly make plays and share them with their players.
 
 Features include:
 Drawing plays,
