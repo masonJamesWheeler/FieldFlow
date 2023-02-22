@@ -10,7 +10,7 @@ const user = auth?.currentUser;
 export const actions: Actions = {
     handlePayment: async (event) => {
         console.log('hello')
-        const stripe = new Stripe("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", {
+        // const stripe = new Stripe("", {
             apiVersion: '2022-11-15',
         });
 

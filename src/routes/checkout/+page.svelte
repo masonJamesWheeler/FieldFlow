@@ -16,7 +16,7 @@
 
     onMount(async () => {
         stripe = await loadStripe(
-            "pk_live_51MO4VQH4tqBFeYcelvXv9DEMt7u3yWnDxjIjI5oQc85q7sOgPheOs8eR7oPGDl8aL4SLt4XfjXFob1hhQLds8iob00gKVuGqec",
+            "",
             {
                 apiVersion: "2022-11-15",
             }
