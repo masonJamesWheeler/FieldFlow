@@ -3,9 +3,19 @@ import { goto } from '$app/navigation';
 import { redirect } from '@sveltejs/kit';
 import {auth} from '../lib/firebase'
 import { error } from '@sveltejs/kit';
+import {onAuthStateChanged} from 'firebase/auth'
 
 
 let user = auth?.currentUser
+
+// onAuth state change
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // User is signed in.
+        user = auth.currentUser
+    }
+})
+
 // subscribe to the auth store
 // if the user is null, redirect to the login page
 // if the user is not null, redirect to the viewplays page
@@ -14,15 +24,8 @@ let user = auth?.currentUser
 // if the user is null, redirect to the login page
 // if the user is not null, redirect to the viewplays page
 function gotoPlays() {
-    if (user == null) {      
-        goto('/login')
-    } else {
-        goto('/viewplays')
-        // throw error to the user
-
-        console.log(user)
-    }
-    
+  console.log(user)
+  goto('/viewplays')
 }
 </script>
 

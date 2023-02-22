@@ -5,6 +5,7 @@ import type { PageLoad } from './$types';
 import {getFormationNames, getPlayNames, getPlay, getInstallNames} from "../../utils/stores"
 import { onAuthStateChanged } from "firebase/auth";
 import { onMount } from "svelte";
+import { goto } from "$app/navigation";
 
 // this is the page load function
 let user = getAuth()?.currentUser;
@@ -12,16 +13,18 @@ let userLoaded = false;
 
 
   onAuthStateChanged(auth, (user) => {
-  if (user) {
+    console.log(user)
+  if (user != null) {
     userLoaded = true;
-    // timeout to allow the page to load
   } else {
+    // set a timeout to give the user time to see the error message
   }
 });
 
 export const load = (async ({ params }) => {
     // if we have a user then we want to pass the user to the page
-    if (userLoaded && user.uid != null) {
+    console.log(user)
+    if (userLoaded) {
         let formations = await getFormationNames(user.uid, db);
         let playNames = await getPlayNames(user.uid, db);
         let installNames = await getInstallNames(user.uid, db);
@@ -36,7 +39,9 @@ export const load = (async ({ params }) => {
         return { props: { user, formations, playNames, plays, installNames
          } };
     } else {
-        return { props: { user: null
-          } };
+      // set a timeout to give the user time to see the error message
+      setTimeout(() => {
+        return { props: { user: null, formations: [], playNames: [], plays: [], installNames: [] } };
+      }, 2000);
     }
 }) as PageLoad;

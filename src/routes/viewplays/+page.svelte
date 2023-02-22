@@ -29,8 +29,11 @@
 	let selectedPersonnel = [];
 
 	onMount(async () => {
+		console.log(data)
+		if (data.props.user == null) {
+			goto('/login')
+		}
 		let searchedPlays = [];
-		console.log(selectedDowns);
 	});
 
 	function changeSearchedPlays(searchTerm, data) {

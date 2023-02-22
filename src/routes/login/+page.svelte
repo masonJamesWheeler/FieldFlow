@@ -1,11 +1,21 @@
 <script lang="ts"> 
 import {app, auth} from "../../lib/firebase";
 import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { goto } from '$app/navigation';
 
 
 let email = "";
 let password = "";
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+      
+    } else {
+        console.log("no user");
+        user = null; 
+    }
+});
 
 
 // function to attempt to log in the user

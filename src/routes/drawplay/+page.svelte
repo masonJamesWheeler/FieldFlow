@@ -201,10 +201,6 @@
 				currPlayer.x = currPlayer.adjmatrix.firstAdded.data.x;
 				currPlayer.y = currPlayer.adjmatrix.firstAdded.data.y;
 			}
-			ogColor = currPlayer.color;
-			if (currPlayer == editingPlayer) {
-				currPlayer.color = 'gray';
-			}
 			// traverse the adjacency matrix
 			currPlayer.adjmatrix.nodes.forEach((node) => {
 
@@ -354,10 +350,6 @@
 			if (currPlayer.progression != null) {
 				drawProgression(currPlayer);
 			}
-			if (currPlayer == editingPlayer) {
-				editingPlayer.color = ogColor
-				ogColor = "black"
-			}
 		}
         // iterate through the players and add the ovals last
 		players.forEach((currPlayer) => {
@@ -487,7 +479,6 @@
 			// draw the players
 			drawPlayers();
 		} else if (editing) {
-			// iterate through nodes
 			checkClick(m.x, m.y);
 			console.log(editingPlayer)
 			// if the user is clicking on a node and then let the user drag the node
@@ -534,13 +525,11 @@
 					}
 				});
 			} else {
-				
 				if (!keysPressed['s']) {
 				escape();
 				}
 			}
 		}
-
 		// if current player is not null
 		if (current_player != null) {
 		}
@@ -682,6 +671,7 @@
 		}
 		// reset the m object
 	}
+
     // function to project the image of the next player to add
     function projectPlayer () {
         clearCanvas(ctx);
@@ -795,18 +785,8 @@
 
 	// function to escape currently drawing a player's path
 	function escape() {
-		
 		// if the user is currently drawing
 		if (drawing) {
-			// set current player's color to black if it is not null
-			if (current_player != null) {
-				current_player.color = ogColor;
-			}
-			// if the editing player is not null
-			if (editingPlayer != null) {
-				// set the editing player's color to black
-				editingPlayer.color = ogColor
-			}
 			// set editing to false
 			editing = false;
 			// set drawing to false
@@ -823,11 +803,6 @@
 		}
 		if (editing) {
 			// set current player's color to black if it is not null
-			// if editingplayer is not null
-			if (editingPlayer != null) {
-				// set the editing player's color to black
-				editingPlayer.color = ogColor
-			}
 			// set editing to false
 			editing = false;
 			// set the current player to null
@@ -839,8 +814,6 @@
 			// set the edit node to null
 			editNode = null;
 		}
-		// reset the ogColor value
-		ogColor = "black"
 		// reset the magnet values 
 		typing = false
 		// reset length
@@ -921,11 +894,7 @@
 			escape();
 			clearCanvas(ctx);
 			drawPlayers();
-		} else {
-			// recently changed to do nothing
-            // we'll see if we want to change later
 		}
-		//drawPlayers();
 	}
 
 	// function draw arrowhead
@@ -970,14 +939,12 @@
 		ctx.lineTo(x, y);
 		ctx.stroke();
 
-
-		
-		
 	}
 
 	// function to draw a bezier curve
 	function drawBezier(x1, y1, x2, y2, cx, cy, color) {
 		ctx.strokeStyle = color;
+		ctx.lineWidth = 14;
 		ctx.beginPath();
 		ctx.moveTo(x1, y1);
 		ctx.bezierCurveTo(cx, cy, cx, cy, x2, y2);
@@ -1139,11 +1106,7 @@
 							) <
 						10
 					) {
-						// return the line
 						success = true;
-						if (editingPlayer != null) {
-							editingPlayer.color = ogColor;
-						}
 						editingPlayer = currPlayer;
 					}
 					} else 
@@ -1165,9 +1128,6 @@
 					) {
 						// return the line
 						success = true;
-						if (editingPlayer != null) {
-							editingPlayer.color = ogColor;
-						}
 						editingPlayer = currPlayer;
 					}
 				});
@@ -1188,7 +1148,12 @@
 	// if so, then we are now editing the player
 	function checkClick(x, y) {
 		let success = false;
-		// traverse the players array
+		
+		// change all the players color to black
+		players.forEach((player) => {
+			player.color = "black";
+		});
+
 		for (let i = 0; i < players.length; i++) {
 			// check if we are clicking near the player's oval
 			if (
@@ -1315,12 +1280,8 @@
 				
                 // set the editing player to the player we clicked on
 				if (editingPlayer != null) {
-							editingPlayer.color = ogColor;
-							ogColor = "black"
 							editingPlayer = players[i];
 						} else {
-							editingPlayer = players[i];
-							ogColor = editingPlayer.color
 							editingPlayer.color = "gray"
 						}
 				
@@ -1354,6 +1315,10 @@
 	// a function to load the formation and draw it upon request
 	async function loadFormation(formation, ctx, canvas, img, auth) {
 		players = await drawFormation(formation, ctx, canvas, img, auth);
+		// clear the canvas
+		clearCanvas(ctx);
+		// draw players
+		drawPlayers();
 	}
 
 	async function loadPlay(auth, name, db) {
