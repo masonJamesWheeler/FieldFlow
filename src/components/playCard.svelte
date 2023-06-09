@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { onMount } from 'svelte';
 	import { drawPlayers } from '../utils/drawing';
 	import {clickedPlay} from "../lib/stores";
@@ -50,11 +50,11 @@
 	}
 </script>
 
-<!--  for each player array on the data -->
+ for each player array on the data -->
 <!-- draw the players on the canvas with the drawPlayers function -->
 <!-- svelte-ignore missing-declaration -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="h-full aspect-h-1 w-full  hover:opacity-95  hover:cursor-pointer shadow-xl flex" on:click|preventDefault={() => goToPlay(data)}>
+<!-- <div class="h-full aspect-h-1 w-full  hover:opacity-95  hover:cursor-pointer shadow-xl flex" on:click|preventDefault={() => goToPlay(data)}>
 	<div class="card rounded-b-2xl w-full">
 		<figure>
 			<canvas
@@ -77,4 +77,4 @@
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->

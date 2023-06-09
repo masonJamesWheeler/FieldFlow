@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import type { PageData } from './$types';
 	import PlayCard from '../../components/playCard.svelte';
 	import { search } from '../../utils/stores';
@@ -58,7 +58,7 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y-missing-attribute -->
+svelte-ignore a11y-missing-attribute
 <html data-theme="emerald">
 	<div class="h-full w-screen bg-gray-900">
 		<section class="pt-10 pb-10 lg:pt-[60px] lg:pb-20 mx-6">
@@ -70,7 +70,7 @@
 					>
 						<div class="flex flex-nowrap md:ml-6 ml-4 ">
 							{#each data.props.installNames as install}
-							<!-- svelte-ignore a11y-click-events-have-key-events -->
+							svelte-ignore a11y-click-events-have-key-events 
 							<div class="inline-block px-3" on:click={() => goToInstall(install)}>
 								<div class="flex-col w-40 overflow-hidden">
 									<svg
@@ -123,9 +123,9 @@
 									{#if searchPlay != null && searchPlay != '' && data.props.plays != null}
 										<ul class="p-2 bg-gray-200 rounded-b w-full max-h-32 max-w-xs text-center">
 											{#each searchedPlays as play}
-												<!-- svelte-ignore a11y-missing-attribute -->
+												svelte-ignore a11y-missing-attribute 
 												<li>
-													<!-- svelte-ignore a11y-click-events-have-key-events -->
+													 svelte-ignore a11y-click-events-have-key-events 
 													<a on:click|preventDefault={() => goToPlay(play)}
 														class="text-black font-bold hover:cursor-pointer hover:text-gray-600 text-center"
 														>{play.name}</a
@@ -218,7 +218,8 @@
 				</div>
 			</div>
 		</div>
-		<!-- create a play editing canvas environment as a demo for the homepage -->
+		create a play editing canvas environment as a demo for the homepage 
 	</div>
-	<!--  a background div made of a modern design with a few lines separating different colors -->
-</html>
+	 a background div made of a modern design with a few lines separating different colors
+</html> 
+-->

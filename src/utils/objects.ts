@@ -1,136 +1,145 @@
-// a utility file that contains definitions of different classes 
-// that we use as objects in the rest of the program
-import { Graph } from './adjMatrix';
-import type { Graph as GraphType } from './adjMatrix';
-// x, y, color, name, path, adjaency matrix
-	// the objects or stored in the player's arrays and used to draw the path of the players
-	class Player {
-		x: number;
-		y: number;
-		color: string;
-		position: string;
-		job: string;
-		adjmatrix: GraphType<Node>;
-		progression: string
-		defense: boolean;
-		constructor(
-			x: number,
-			y: number,
-			color: string,
-			position: string,
-			job: string,
-			adjmatrix: GraphType<Node>,
-			progression: string,
-			defense: boolean
-		) {
-			this.x = x;
-			this.y = y;
-			this.color = color;
-			this.position = position;
-			this.job = job;
-			this.adjmatrix = adjmatrix;
-			this.progression = progression;
-			this.defense = defense;
-		}
+// a file that defines the useful objects that we'll use in the program
+
+// LIST OF OBJECTS:
+// TEAM
+// PLAYER
+// FORMATION
+// PLAY
+// 
+
+export class Team {
+	players: Player[];
+	formation: Formation;
+	play: Play;
+	constructor(players: Player[], formation: Formation, play: Play) {
+		this.players = players;
+		this.formation = formation;
+		this.play = play;
+	}
+	numPlayers(): number {
+		return this.players.length;
+	}
+	playersValid(): boolean {
+		return this.numPlayers() == 11;
+	}
+	setFormation(formation: Formation) {
+		this.formation = formation;
+	}
+	setPlay(play: Play) {
+		this.play = play;
+	}
+	addPlayer(player: Player) {
+		this.players.push(player);
 	}
 
-	// create a node object to store the nodes of the adjacency matrix
-	class Node {
-		x: number;
-		y: number;
-		cpx: number;
-		cpy: number;
-		color: string;
-		dashed: boolean;
-		cp: boolean;
-		arrow: boolean;
-		blocking: boolean;
-		constructor(
-			x: number,
-			y: number,
-			cpx: number,
-			cpy: number,
-			color: string,
-			dashed: boolean,
-			cp: boolean,
-			arrow: boolean,
-			blocking: boolean
-		) {
-			this.x = x;
-			this.y = y;
-			this.cpx = cpx;
-			this.cpy = cpy;
-			this.color = color;
-			this.dashed = dashed;
-			this.cp = cp;
-			this.arrow = arrow;
-			this.blocking = blocking;
-			
+}
+
+// class for the formation object
+export class Formation {
+	name: string;
+	personnel: string;
+	nxn: string;
+	rightOrLeft: string;
+	constructor(name: string, personnel: string, nxn: string, rightOrLeft: string) {
+		this.name = name;
+		this.personnel = personnel;
+		this.nxn = nxn;
+		this.rightOrLeft = rightOrLeft;
+	}
+}
+
+// class for the player object
+export class Player {
+	position: string;
+	job: string;
+	route: Route;
+	constructor(position: string, job: string, route: Route) {
+		this.position = position;
+		this.job = job;
+		this.route = route;
+	}
+	setPosition(position: string) {
+		if (position.length > 10) {
+			throw new Error("Position name is too long");
+		} else {
+		this.position = position;
 		}
 	}
-	class Formation {
-		qb:Player;
-		lt:Player;
-		lg:Player;
-		c:Player;
-		rg:Player;
-		rt:Player;
-		skill1:Player;
-		skill2:Player;
-		skill3:Player;
-		skill4:Player;
-		skill5:Player;
-		formationName: string;
-		personnel:string;
-		players:Player[]
-		constructor(
-			qb:Player,
-			lt:Player,
-			lg:Player,
-			c:Player,
-			rg:Player,
-			rt:Player,
-			skill1:Player,
-			skill2:Player,
-			skill3:Player,
-			skill4:Player,
-			skill5:Player,
-			formationName: string,
-			personnel: string,
-			players: Player[]
-		) {
-			this.qb = qb;
-			this.lt = lt;
-			this.lg = lg;
-			this.c = c;
-			this.rg = rg;
-			this.rt = rt;
-			this.skill1 = skill1;
-			this.skill2 = skill2;
-			this.skill3 = skill3;
-			this.skill4 = skill4;
-			this.skill5 = skill5;
-			this.formationName = formationName;
-			this.personnel = personnel;
-			this.players = [qb, lt, lg, c, rg, rt, skill1, skill2, skill3, skill4, skill5]
-			
+	setJob(job: string) {
+		if (job.length > 48) {
+			throw new Error("Job name is too long");
+		} else {
+		this.job = job;
 		}
 	}
-
-	// a class for a Install Object, the Install Object has the following properties
-	// Name, Plays, Formations, TimeStamp
-	class Install {
-		name: string;
-		plays: Array<any>;
-		formations: Array<any>;
-		timeStamp: string;
-		constructor(name: string, plays: Array<any>, formations: Array<any>, timeStamp: string) {
-			this.name = name;
-			this.plays = plays;
-			this.formations = formations;
-			this.timeStamp = timeStamp;
-		}
+	setRoute(route: Route) {
+		this.route = route;
 	}
+}
+	
+
+// a class of route to represent the path of the player
+export class Route {
+	firstNode: Route_Node;
+	lastNode: Route_Node;
+	routeNodes : Route_Node[];
+	constructor(firstNode: Route_Node, lastNode: Route_Node, routeNodes: Route_Node[]) {
+		this.firstNode = firstNode;
+		this.lastNode = lastNode;
+		this.routeNodes = routeNodes;
+	}
+	getFirstNode(): Route_Node {
+		return this.firstNode;
+	}
+	getLastNode(): Route_Node {
+		return this.lastNode;
+	}
+	getRouteNodes(): Route_Node[] {
+		return this.routeNodes;
+	}
+	setFirstNode(firstNode: Route_Node) {
+		this.firstNode = firstNode;
+	}
+	setLastNode(lastNode: Route_Node) {
+		this.lastNode = lastNode;
+	}
+	addNode(node: Route_Node) {
+		this.routeNodes.push(node);
+	}
+}
 
 
-    export { Player, Node, Formation, Install}
+export class Route_Node {
+	x: number;
+	y: number;
+	parent: Route_Node;
+	connectedNodes: Route_Node[];
+	constructor(x: number, y: number, parent:Route_Node, connectedNodes: Route_Node[]) {
+		this.x = x;
+		this.y = y;
+		this.parent = parent;
+		this.connectedNodes = connectedNodes;
+	}
+	getParent(): Route_Node {
+		return this.parent;
+	}
+	getConnectedNodes(): Route_Node[] {
+		return this.connectedNodes;
+	}
+	
+}
+
+// class for the play object
+export class Play {
+	name: string;
+	formation: Formation;
+	description: string;
+	notes: string[];
+	constructor(name: string, formation: Formation, description: string, notes: string[]) {
+		this.name = name;
+		this.formation = formation;
+		this.description = description;
+		this.notes = notes;
+	}
+}
+
