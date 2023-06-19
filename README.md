@@ -5,6 +5,7 @@ This repository hosts the code for FieldFlow, a project I am actively developing
 Please note that this README may not be up-to-date with the current state of the project as it is under active development.
 
 ![FieldFlow Screenshot](https://user-images.githubusercontent.com/106849824/223888302-c524e75e-8eaf-48ef-b6cc-cee15ee8986e.png)
+![FieldFlow_Secrecy](https://github.com/masonJamesWheeler/FieldFlow/assets/106849824/06b9a8ba-900d-4d0c-bfed-c5fc881219ab)
 
 ## Features
 
