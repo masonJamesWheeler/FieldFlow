@@ -1,14 +1,14 @@
 import sql from 'mssql';
 
 const config = {
-  connectionString: process.env.DB_CONNECTION_STRING
+  connectionString: "Server=tcp:fieldflow-sql.database.windows.net,1433;Initial Catalog=FieldFlow-DB;Persist Security Info=False;User ID=fieldflow;Password=PurpleReign81!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 };
 
 let pool;
 
 export async function getConnection() {
   if (!pool) {
-    pool = await new sql.ConnectionPool(config).connect();
+    pool = await sql.connect(config.connectionString);
   }
   return pool;
 }
@@ -22,5 +22,6 @@ export async function query(sqlQuery, params = []) {
   });
 
   const result = await request.query(sqlQuery);
+  console.log(result);
   return result.recordset;
 }
